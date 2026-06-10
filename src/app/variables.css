@@ -1,0 +1,78 @@
+@layer theme {
+  :root {
+    /* Enforce Dark Theme Only */
+    color-scheme: dark;
+
+    /* Base Palette (Professional Dark Theme) */
+    --clr-bg: #0b0f19;          /* Deep Slate / Midnight Blue */
+    --clr-fg: #f8fafc;          /* Off-white / Slate Silver */
+    --clr-card-bg: rgba(17, 24, 39, 0.65); /* Glassmorphic Charcoal */
+    --clr-card-border: rgba(255, 255, 255, 0.07); /* Very subtle card border */
+    
+    --clr-muted: #94a3b8;       /* Slate Muted */
+    --clr-accent: #10b981;      /* Premium Emerald Green */
+    --clr-accent-hover: #34d399; /* Vibrant Mint */
+    --clr-accent-glow: rgba(16, 185, 129, 0.15); /* Subtle Emerald Glow */
+    --clr-border: #1e293b;      /* Slate border */
+    
+    /* Semantic Mapped Variables */
+    --bg-app: var(--clr-bg);
+    --fg-app: var(--clr-fg);
+    --bg-card: var(--clr-card-bg);
+    --border-card: var(--clr-card-border);
+    --color-muted: var(--clr-muted);
+    --color-accent: var(--clr-accent);
+    --color-accent-hover: var(--clr-accent-hover);
+    --color-accent-glow: var(--clr-accent-glow);
+    --border-divider: var(--clr-border);
+    
+    /* Decorative Colors (Emerald to Cyan professional gradients) */
+    --gradient-hero: linear-gradient(135deg in oklab, #10b981, #06b6d4);
+    --gradient-hero-dark: linear-gradient(135deg in oklab, #059669, #0891b2);
+    
+    --bg-gradient-mesh: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+    --bg-gradient-mesh-2: radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.06) 0px, transparent 50%);
+
+    /* Typography Hierarchy */
+    --font-heading: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    --font-body: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+    --font-mono: var(--font-geist-mono), monospace;
+
+    --fs-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+    --fs-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+    --fs-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --fs-lg: clamp(1.125rem, 1.05rem + 0.375vw, 1.25rem);
+    --fs-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+    --fs-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+    --fs-3xl: clamp(2rem, 1.75rem + 1vw, 2.75rem);
+    --fs-display: clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+
+    --lh-body: 1.6;
+    --lh-heading: 1.2;
+
+    /* Borders & Squircle Curves */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 32px;
+    --radius-full: 9999px;
+
+    /* Shadow Layers for Depth */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+
+    /* Layout Spacing */
+    --container-max-width: 1200px;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-24: 6rem;
+  }
+}
