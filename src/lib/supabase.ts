@@ -116,18 +116,6 @@ export async function getProfile(): Promise<Profile> {
       console.warn('Could not fetch profile from Supabase, using mock data:', error);
       return MOCK_PROFILE;
     }
-
-    // Parse location from bio if serialized there
-    const rawBio = data.bio || '';
-    const delimiter = '\n||location:';
-    const parts = rawBio.split(delimiter);
-    if (parts.length > 1) {
-      data.bio = parts[0];
-      data.location = parts[1].trim();
-    } else {
-      data.location = (data as any).location || 'New York City, NY';
-    }
-
     return data;
   } catch (err) {
     console.error('Error in getProfile:', err);

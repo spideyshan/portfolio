@@ -96,18 +96,7 @@ export default function AdminDashboard() {
     try {
       // Fetch Profile
       const { data: profData } = await supabase.from('profile').select('*').maybeSingle();
-      if (profData) {
-        const rawBio = profData.bio || '';
-        const delimiter = '\n||location:';
-        const parts = rawBio.split(delimiter);
-        if (parts.length > 1) {
-          profData.bio = parts[0];
-          profData.location = parts[1].trim();
-        } else {
-          profData.location = (profData as any).location || 'New York City, NY';
-        }
-        setProfile(profData);
-      }
+      if (profData) setProfile(profData);
 
       // Fetch Projects
       const { data: projData } = await supabase.from('projects').select('*').order('sort_order', { ascending: true });
@@ -238,12 +227,11 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
-      const combinedBio = `${profile.bio}\n||location:${profile.location || 'New York City, NY'}`;
       const { error } = await supabase.from('profile').upsert({
         id: (profile as any).id || undefined,
         name: profile.name,
         role: profile.role,
-        bio: combinedBio,
+        bio: profile.bio,
         avatar_url: profile.avatar_url,
         avatar_url_about: profile.avatar_url_about,
         resume_url: profile.resume_url,
@@ -251,6 +239,7 @@ export default function AdminDashboard() {
         github_url: profile.github_url,
         linkedin_url: profile.linkedin_url,
         twitter_url: profile.twitter_url,
+        location: profile.location,
         updated_at: new Date().toISOString()
       });
 
@@ -487,17 +476,17 @@ export default function AdminDashboard() {
         return `'${val.toString().replace(/'/g, "''")}'`;
       };
 
-      const combinedBio = `${profile.bio}\n||location:${profile.location || 'New York City, NY'}`;
-      sqlContent += `INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, email, github_url, linkedin_url, twitter_url)\nVALUES (\n`;
+      sqlContent += `INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, email, github_url, linkedin_url, twitter_url, location)\nVALUES (\n`;
       sqlContent += `  ${escapeVal(profile.name)},\n`;
       sqlContent += `  ${escapeVal(profile.role)},\n`;
-      sqlContent += `  ${escapeVal(combinedBio)},\n`;
+      sqlContent += `  ${escapeVal(profile.bio)},\n`;
       sqlContent += `  ${escapeVal(profile.avatar_url)},\n`;
       sqlContent += `  ${escapeVal(profile.avatar_url_about)},\n`;
       sqlContent += `  ${escapeVal(profile.email)},\n`;
       sqlContent += `  ${escapeVal(profile.github_url)},\n`;
       sqlContent += `  ${escapeVal(profile.linkedin_url)},\n`;
-      sqlContent += `  ${escapeVal(profile.twitter_url)}\n`;
+      sqlContent += `  ${escapeVal(profile.twitter_url)},\n`;
+      sqlContent += `  ${escapeVal(profile.location)}\n`;
       sqlContent += `);\n\n`;
 
       sqlContent += `-- ==========================================\n`;
@@ -561,11 +550,10 @@ export default function AdminDashboard() {
       const localProfile = localStorage.getItem('portfolio_mock_profile');
       if (localProfile) {
         const p = JSON.parse(localProfile);
-        const combinedBio = `${p.bio}\n||location:${p.location || 'New York City, NY'}`;
         const profileToUpsert = {
           name: p.name,
           role: p.role,
-          bio: combinedBio,
+          bio: p.bio,
           avatar_url: p.avatar_url,
           avatar_url_about: p.avatar_url_about,
           resume_url: p.resume_url,
@@ -573,6 +561,7 @@ export default function AdminDashboard() {
           github_url: p.github_url,
           linkedin_url: p.linkedin_url,
           twitter_url: p.twitter_url,
+          location: p.location,
         };
 
         const { data: existingProf } = await supabase.from('profile').select('id').maybeSingle();
