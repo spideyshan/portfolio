@@ -303,8 +303,11 @@
 }
 
 .socialIcon {
-  font-size: var(--fs-lg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--color-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .socialIcon:hover {
