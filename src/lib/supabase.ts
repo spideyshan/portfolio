@@ -16,7 +16,7 @@ const MOCK_PROFILE = {
   avatar_url: 'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz',
   avatar_url_about: 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
   resume_url: '#',
-  email: 'spidey@ny.com',
+  email: 'abc@gmail.com',
   github_url: 'https://github.com',
   linkedin_url: 'https://linkedin.com',
   twitter_url: 'https://twitter.com',

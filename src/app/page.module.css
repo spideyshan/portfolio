@@ -836,14 +836,19 @@
 
 @media (max-width: 640px) {
   .nav {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
     height: auto;
     padding-block: var(--space-4);
-    row-gap: var(--space-3);
+    row-gap: var(--space-4);
   }
   
   .navLinks {
-    column-gap: var(--space-5);
+    grid-column: span 2;
+    display: flex;
+    justify-content: center;
+    column-gap: var(--space-6);
     padding: 0;
   }
   

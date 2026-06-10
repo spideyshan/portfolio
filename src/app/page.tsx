@@ -1,6 +1,8 @@
 import { getProfile, getProjects, getSkills } from '@/lib/supabase';
 import ProjectGrid from '@/components/ProjectGrid';
 import ContactForm from '@/components/ContactForm';
+import ThemeToggle from '@/components/ThemeToggle';
+import AIChat from '@/components/AIChat';
 import styles from './page.module.css';
 
 export const revalidate = 60; // Revalidate cache every 60 seconds
@@ -53,6 +55,7 @@ export default async function Home() {
               </a>
             </li>
           </ul>
+          <ThemeToggle />
         </nav>
       </header>
 
@@ -61,7 +64,7 @@ export default async function Home() {
         {/* Hero Section */}
         <section className={styles.hero}>
           <div className={styles.heroContent}>
-            <span className={styles.heroSubtitle}>Hello World, I'm</span>
+            <span className={styles.heroSubtitle}>Hello World, I&apos;m</span>
             <h1 className={styles.heroTitle}>
               <span className="text-gradient">{profile.name}</span>
             </h1>
@@ -198,7 +201,7 @@ export default async function Home() {
           
           <div className={styles.contactGrid}>
             <div className={styles.contactInfo}>
-              <h3 className={styles.contactHeading}>Let's talk about your project</h3>
+              <h3 className={styles.contactHeading}>Let&apos;s talk about your project</h3>
               <p className={styles.contactText}>
                 Feel free to reach out if you have a project idea, want to collaborate, or just want to chat about web technology!
               </p>
@@ -227,12 +230,13 @@ export default async function Home() {
           &copy; {new Date().getFullYear()} {profile.name}. All rights reserved.
         </p>
         <div style={{ marginBlockStart: 'var(--space-2)' }}>
-          <a href="/admin" className={styles.footerText} style={{ fontSize: 'var(--fs-xs)', opacity: 0.5 }}>
+          {/* <a href="/admin" className={styles.footerText} style={{ fontSize: 'var(--fs-xs)', opacity: 0.5 }}>
             🔑 Admin Dashboard
-          </a>
+          </a> */}
         </div>
       </footer>
       </div>
+      <AIChat />
     </>
   );
 }
