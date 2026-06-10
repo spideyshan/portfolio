@@ -813,3 +813,49 @@
   font-size: var(--fs-sm);
   color: var(--color-muted);
 }
+
+/* ==========================================
+   MOBILE & RESPONSIVE OPTIMIZATIONS
+   ========================================== */
+
+@media (max-width: 767px) {
+  .hero {
+    text-align: center;
+    padding-block-start: var(--space-12);
+  }
+  .heroContent {
+    align-items: center;
+  }
+  .heroBio {
+    margin-inline: auto;
+  }
+  .heroButtons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav {
+    flex-direction: column;
+    height: auto;
+    padding-block: var(--space-4);
+    row-gap: var(--space-3);
+  }
+  
+  .navLinks {
+    column-gap: var(--space-5);
+    padding: 0;
+  }
+  
+  .container {
+    padding-inline: var(--space-4);
+  }
+  
+  .main {
+    row-gap: var(--space-16);
+  }
+  
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+}
