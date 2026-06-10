@@ -68,24 +68,31 @@ export default function AdminDashboard() {
         setHasLocalData(true);
       }
 
-      if (isSupabaseConfigured() && supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          router.push('/admin/login');
-          return;
+      try {
+        if (isSupabaseConfigured() && supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            router.push('/admin/login');
+            return;
+          }
+          setIsDemo(false);
+          await loadSupabaseData();
+        } else {
+          const mockSession = localStorage.getItem('portfolio_mock_session');
+          if (mockSession !== 'true') {
+            router.push('/admin/login');
+            return;
+          }
+          setIsDemo(true);
+          loadMockData();
         }
-        setIsDemo(false);
-        await loadSupabaseData();
-      } else {
-        const mockSession = localStorage.getItem('portfolio_mock_session');
-        if (mockSession !== 'true') {
-          router.push('/admin/login');
-          return;
-        }
+      } catch (err) {
+        console.warn('Network error or connection failed in checkAuth, falling back to offline demo mode:', err);
         setIsDemo(true);
         loadMockData();
+      } finally {
+        setAuthLoading(false);
       }
-      setAuthLoading(false);
     }
     checkAuth();
   }, [router]);

@@ -17,11 +17,15 @@ export default function AdminLogin() {
   useEffect(() => {
     // Check if already logged in via Supabase
     if (isSupabaseConfigured() && supabase) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          router.push('/admin');
-        }
-      });
+      supabase.auth.getSession()
+        .then(({ data: { session } }) => {
+          if (session) {
+            router.push('/admin');
+          }
+        })
+        .catch((err) => {
+          console.warn('Could not check Supabase auth session (offline?):', err);
+        });
     } else {
       setIsDemo(true);
       // Check mock session
