@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS public.profile (
     github_url TEXT,
     linkedin_url TEXT,
     twitter_url TEXT,
+    location TEXT DEFAULT 'New York City, NY',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -106,7 +107,7 @@ CREATE POLICY "Allow authenticated users to modify messages"
     WITH CHECK (true);
 
 -- Insert dummy data for initialization (optional, helpful for preview)
-INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, github_url, linkedin_url, email)
+INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, github_url, linkedin_url, email, location)
 VALUES (
     'Shanmuga Nathan Manavalan', 
     'Computer Science Student & Aspiring Software Engineer', 
@@ -115,7 +116,8 @@ VALUES (
     'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
     'https://github.com',
     'https://linkedin.com',
-    'spidey@ny.com'
+    'spidey@ny.com',
+    'New York City, NY'
 ) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.projects (title, description, tags, github_url, live_url, featured, sort_order)

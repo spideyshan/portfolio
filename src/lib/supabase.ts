@@ -19,7 +19,8 @@ const MOCK_PROFILE = {
   email: 'spidey@ny.com',
   github_url: 'https://github.com',
   linkedin_url: 'https://linkedin.com',
-  twitter_url: 'https://twitter.com'
+  twitter_url: 'https://twitter.com',
+  location: 'New York City, NY'
 };
 
 const MOCK_PROJECTS = [
@@ -76,6 +77,7 @@ export interface Profile {
   github_url?: string;
   linkedin_url?: string;
   twitter_url?: string;
+  location?: string;
 }
 
 export interface Project {
@@ -114,6 +116,18 @@ export async function getProfile(): Promise<Profile> {
       console.warn('Could not fetch profile from Supabase, using mock data:', error);
       return MOCK_PROFILE;
     }
+
+    // Parse location from bio if serialized there
+    const rawBio = data.bio || '';
+    const delimiter = '\n||location:';
+    const parts = rawBio.split(delimiter);
+    if (parts.length > 1) {
+      data.bio = parts[0];
+      data.location = parts[1].trim();
+    } else {
+      data.location = (data as any).location || 'New York City, NY';
+    }
+
     return data;
   } catch (err) {
     console.error('Error in getProfile:', err);

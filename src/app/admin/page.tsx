@@ -96,7 +96,18 @@ export default function AdminDashboard() {
     try {
       // Fetch Profile
       const { data: profData } = await supabase.from('profile').select('*').maybeSingle();
-      if (profData) setProfile(profData);
+      if (profData) {
+        const rawBio = profData.bio || '';
+        const delimiter = '\n||location:';
+        const parts = rawBio.split(delimiter);
+        if (parts.length > 1) {
+          profData.bio = parts[0];
+          profData.location = parts[1].trim();
+        } else {
+          profData.location = (profData as any).location || 'New York City, NY';
+        }
+        setProfile(profData);
+      }
 
       // Fetch Projects
       const { data: projData } = await supabase.from('projects').select('*').order('sort_order', { ascending: true });
@@ -133,7 +144,8 @@ export default function AdminDashboard() {
       email: 'spidey@ny.com',
       github_url: 'https://github.com',
       linkedin_url: 'https://linkedin.com',
-      twitter_url: 'https://twitter.com'
+      twitter_url: 'https://twitter.com',
+      location: 'New York City, NY'
     });
 
     // Auto-update cached profile if it uses placeholder details
@@ -144,6 +156,10 @@ export default function AdminDashboard() {
     }
     if (!cachedProfile.avatar_url_about) {
       cachedProfile.avatar_url_about = 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL';
+      needsUpdate = true;
+    }
+    if (!cachedProfile.location) {
+      cachedProfile.location = 'New York City, NY';
       needsUpdate = true;
     }
     if (cachedProfile.avatar_url && cachedProfile.avatar_url.includes('unsplash.com')) {
@@ -222,11 +238,12 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
+      const combinedBio = `${profile.bio}\n||location:${profile.location || 'New York City, NY'}`;
       const { error } = await supabase.from('profile').upsert({
         id: (profile as any).id || undefined,
         name: profile.name,
         role: profile.role,
-        bio: profile.bio,
+        bio: combinedBio,
         avatar_url: profile.avatar_url,
         avatar_url_about: profile.avatar_url_about,
         resume_url: profile.resume_url,
@@ -470,10 +487,11 @@ export default function AdminDashboard() {
         return `'${val.toString().replace(/'/g, "''")}'`;
       };
 
+      const combinedBio = `${profile.bio}\n||location:${profile.location || 'New York City, NY'}`;
       sqlContent += `INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, email, github_url, linkedin_url, twitter_url)\nVALUES (\n`;
       sqlContent += `  ${escapeVal(profile.name)},\n`;
       sqlContent += `  ${escapeVal(profile.role)},\n`;
-      sqlContent += `  ${escapeVal(profile.bio)},\n`;
+      sqlContent += `  ${escapeVal(combinedBio)},\n`;
       sqlContent += `  ${escapeVal(profile.avatar_url)},\n`;
       sqlContent += `  ${escapeVal(profile.avatar_url_about)},\n`;
       sqlContent += `  ${escapeVal(profile.email)},\n`;
@@ -543,10 +561,11 @@ export default function AdminDashboard() {
       const localProfile = localStorage.getItem('portfolio_mock_profile');
       if (localProfile) {
         const p = JSON.parse(localProfile);
+        const combinedBio = `${p.bio}\n||location:${p.location || 'New York City, NY'}`;
         const profileToUpsert = {
           name: p.name,
           role: p.role,
-          bio: p.bio,
+          bio: combinedBio,
           avatar_url: p.avatar_url,
           avatar_url_about: p.avatar_url_about,
           resume_url: p.resume_url,
@@ -792,7 +811,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(4, 1fr)' }}>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>GitHub URL</label>
                   <input
@@ -818,6 +837,16 @@ export default function AdminDashboard() {
                     value={profile.twitter_url || ''}
                     onChange={(e) => setProfile({ ...profile, twitter_url: e.target.value })}
                     className={styles.formInput}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Location</label>
+                  <input
+                    type="text"
+                    value={profile.location || ''}
+                    onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                    className={styles.formInput}
+                    placeholder="New York City, NY"
                   />
                 </div>
               </div>

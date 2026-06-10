@@ -212,7 +212,7 @@ export default async function Home() {
                 )}
                 <div className={styles.contactDetailItem}>
                   <span className={styles.contactIcon}>📍</span>
-                  <span>New York City, NY</span>
+                  <span>{profile.location || 'New York City, NY'}</span>
                 </div>
               </div>
             </div>
