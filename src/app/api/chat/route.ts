@@ -7,6 +7,13 @@ interface HistoryItem {
   text: string;
 }
 
+const getProficiencyLabel = (pct: number): string => {
+  if (pct <= 40) return 'Beginner';
+  if (pct <= 75) return 'Intermediate';
+  if (pct <= 90) return 'Advanced';
+  return 'Expert';
+};
+
 // Smart Mock Responder for Demo Mode
 async function handleDemoMode(message: string): Promise<string> {
   const msg = message.toLowerCase();
@@ -16,7 +23,7 @@ async function handleDemoMode(message: string): Promise<string> {
 
   if (msg.includes('skill') || msg.includes('language') || msg.includes('tech') || msg.includes('stack')) {
     const skills = await getSkills();
-    const skillNames = skills.map((s) => `${s.name} (${s.proficiency}%)`).join(', ');
+    const skillNames = skills.map((s) => `${s.name} (${getProficiencyLabel(s.proficiency)})`).join(', ');
     return `Shanmuga's technical skills include: ${skillNames}. He specializes in React, Next.js, and TypeScript for the frontend, and Node.js with Supabase on the backend!`;
   }
   
@@ -70,7 +77,7 @@ export async function POST(req: Request) {
     ]);
 
     // Construct system instructions with portfolio context
-    const skillsListStr = skills.map((s) => `- ${s.name} (${s.category}, proficiency: ${s.proficiency}%)`).join('\n');
+    const skillsListStr = skills.map((s) => `- ${s.name} (${s.category}, proficiency: ${getProficiencyLabel(s.proficiency)})`).join('\n');
     const projectsListStr = projects.map((p) => `- ${p.title}: ${p.description} (Tags: ${p.tags.join(', ')})`).join('\n');
 
     const systemInstruction = `

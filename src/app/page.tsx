@@ -7,6 +7,13 @@ import styles from './page.module.css';
 
 export const revalidate = 60; // Revalidate cache every 60 seconds
 
+const getProficiencyLabel = (pct: number): string => {
+  if (pct <= 40) return 'Beginner';
+  if (pct <= 75) return 'Intermediate';
+  if (pct <= 90) return 'Advanced';
+  return 'Expert';
+};
+
 export default async function Home() {
   // Fetch data concurrently on the server
   const [profile, projects, skills] = await Promise.all([
@@ -54,6 +61,18 @@ export default async function Home() {
                 Contact
               </a>
             </li>
+            {profile.resume_url && profile.resume_url !== '#' && (
+              <li>
+                <a 
+                  href={profile.resume_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className={styles.navLink}
+                >
+                  Resume
+                </a>
+              </li>
+            )}
           </ul>
           <ThemeToggle />
         </nav>
@@ -73,9 +92,20 @@ export default async function Home() {
               <a href="#contact" className={`${styles.btn} ${styles.btnPrimary}`}>
                 Get In Touch
               </a>
-              <a href="#projects" className={`${styles.btn} ${styles.btnSecondary}`}>
-                View Projects
-              </a>
+              {profile.resume_url && profile.resume_url !== '#' ? (
+                <a 
+                  href={profile.resume_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className={`${styles.btn} ${styles.btnSecondary}`}
+                >
+                  Download Resume
+                </a>
+              ) : (
+                <a href="#projects" className={`${styles.btn} ${styles.btnSecondary}`}>
+                  View Projects
+                </a>
+              )}
             </div>
           </div>
           
@@ -127,6 +157,21 @@ export default async function Home() {
                   </a>
                 )}
               </div>
+
+              {profile.resume_url && profile.resume_url !== '#' && (
+                <div style={{ marginBlockStart: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+                  <a 
+                    href={profile.resume_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className={`${styles.btn} ${styles.btnSecondary}`}
+                    style={{ gap: '0.5rem', padding: 'var(--space-2) var(--space-4)', fontSize: 'var(--fs-xs)' }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Resume
+                  </a>
+                </div>
+              )}
             </div>
             
             <div className={styles.aboutText}>
@@ -176,7 +221,7 @@ export default async function Home() {
                     <div key={skill.id} className={styles.skillItem}>
                       <div className={styles.skillHeader}>
                         <span className={styles.skillName}>{skill.name}</span>
-                        <span className={styles.skillProficiency}>{skill.proficiency}%</span>
+                        <span className={styles.skillProficiency}>{getProficiencyLabel(skill.proficiency)}</span>
                       </div>
                       <div className={styles.progressBar}>
                         <div 

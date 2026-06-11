@@ -15,7 +15,7 @@ const MOCK_PROFILE = {
   bio: 'I am a passionate Computer Science student focusing on modern full-stack web development. I love building responsive interfaces, learning new frameworks, and solving algorithmic problems.',
   avatar_url: 'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz',
   avatar_url_about: 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
-  resume_url: '#',
+  resume_url: '/resume.pdf',
   email: 'abc@gmail.com',
   github_url: 'https://github.com',
   linkedin_url: 'https://linkedin.com',

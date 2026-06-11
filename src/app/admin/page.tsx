@@ -11,6 +11,21 @@ import {
 } from '@/lib/supabase';
 import styles from './admin.module.css';
 
+const getProficiencyLabel = (pct: number): string => {
+  if (pct <= 40) return 'Beginner';
+  if (pct <= 75) return 'Intermediate';
+  if (pct <= 90) return 'Advanced';
+  return 'Expert';
+};
+
+const mapToClosestValue = (pct: number | undefined): number => {
+  if (pct === undefined) return 85;
+  if (pct <= 40) return 30;
+  if (pct <= 75) return 65;
+  if (pct <= 90) return 85;
+  return 95;
+};
+
 interface Message {
   id: string;
   name: string;
@@ -69,6 +84,12 @@ export default function AdminDashboard() {
       }
 
       try {
+        const isTwoFactorVerified = localStorage.getItem('portfolio_admin_2fa_verified') === 'true';
+        if (!isTwoFactorVerified) {
+          router.push('/admin/login');
+          return;
+        }
+
         if (isSupabaseConfigured() && supabase) {
           const { data: { session } } = await supabase.auth.getSession();
           if (!session) {
@@ -777,7 +798,7 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(4, 1fr)' }}>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Hero Avatar URL</label>
                   <input
@@ -803,6 +824,16 @@ export default function AdminDashboard() {
                     value={profile.email || ''}
                     onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                     className={styles.formInput}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Resume URL</label>
+                  <input
+                    type="text"
+                    value={profile.resume_url || ''}
+                    onChange={(e) => setProfile({ ...profile, resume_url: e.target.value })}
+                    className={styles.formInput}
+                    placeholder="e.g. /resume.pdf"
                   />
                 </div>
               </div>
@@ -1081,7 +1112,7 @@ export default function AdminDashboard() {
                             {catSkills.map((skill) => (
                               <tr key={skill.id} className={styles.tableRow}>
                                 <td className={styles.tableCell} style={{ fontWeight: '600', width: '50%' }}>{skill.name}</td>
-                                <td className={styles.tableCell} style={{ width: '25%' }}>{skill.proficiency}%</td>
+                                <td className={styles.tableCell} style={{ width: '25%' }}>{getProficiencyLabel(skill.proficiency)}</td>
                                 <td className={`${styles.tableCell} ${styles.actionCell}`} style={{ width: '25%' }}>
                                   <button 
                                     onClick={() => setEditingSkill(skill)} 
@@ -1157,27 +1188,21 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Proficiency Level (%)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={editingSkill.proficiency !== undefined ? editingSkill.proficiency : 80}
+                    <label className={styles.formLabel}>Proficiency Level</label>
+                    <select
+                      value={mapToClosestValue(editingSkill.proficiency)}
                       onChange={(e) => {
-                        const val = e.target.value;
-                        if (val === '') {
-                          setEditingSkill({ ...editingSkill, proficiency: '' as any });
-                        } else {
-                          const num = parseInt(val);
-                          if (!isNaN(num)) {
-                            setEditingSkill({ ...editingSkill, proficiency: Math.min(100, Math.max(0, num)) });
-                          }
-                        }
+                        setEditingSkill({ ...editingSkill, proficiency: parseInt(e.target.value) });
                       }}
                       required
-                      placeholder="80"
                       className={styles.formInput}
-                    />
+                      style={{ background: 'var(--bg-app)', color: 'var(--fg-app)' }}
+                    >
+                      <option value={95}>Expert</option>
+                      <option value={85}>Advanced</option>
+                      <option value={65}>Intermediate</option>
+                      <option value={30}>Beginner</option>
+                    </select>
                   </div>
 
                   <div>

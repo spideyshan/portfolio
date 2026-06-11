@@ -107,13 +107,14 @@ CREATE POLICY "Allow authenticated users to modify messages"
     WITH CHECK (true);
 
 -- Insert dummy data for initialization (optional, helpful for preview)
-INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, github_url, linkedin_url, email, location)
+INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, resume_url, github_url, linkedin_url, email, location)
 VALUES (
     'Shanmuga Nathan Manavalan', 
     'Computer Science Student & Aspiring Software Engineer', 
     'I am a passionate Computer Science student focusing on modern full-stack web development. I love building responsive interfaces, learning new frameworks, and solving algorithmic problems.',
     'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz',
     'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
+    '/resume.pdf',
     'https://github.com',
     'https://linkedin.com',
     'spidey@ny.com',
