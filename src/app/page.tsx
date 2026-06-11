@@ -403,7 +403,7 @@ export default async function Home() {
               >
                 <div className={styles.resumeImageWrapper}>
                   <img 
-                    src="/resume-preview.png" 
+                    src="https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y" 
                     alt={`${profile.name}'s Resume Preview`} 
                     className={styles.resumePreviewImg} 
                   />
