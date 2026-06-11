@@ -394,6 +394,24 @@ export default async function Home() {
                   Download PDF Resume
                 </a>
               </div>
+
+              <a 
+                href={profile.resume_url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={styles.resumeVisualPreview}
+              >
+                <div className={styles.resumeImageWrapper}>
+                  <img 
+                    src="/resume-preview.png" 
+                    alt={`${profile.name}'s Resume Preview`} 
+                    className={styles.resumePreviewImg} 
+                  />
+                  <div className={styles.resumePreviewOverlay}>
+                    <span className={styles.resumePreviewZoomIcon}>🔍 View Full PDF</span>
+                  </div>
+                </div>
+              </a>
             </div>
           </section>
         )}

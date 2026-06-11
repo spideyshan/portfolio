@@ -1107,6 +1107,16 @@
   backdrop-filter: blur(12px);
   position: relative;
   overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .resumeContainer {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
 }
 
 .resumeContainer::after {
@@ -1123,7 +1133,7 @@
 }
 
 .resumeContent {
-  max-width: 600px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1148,6 +1158,7 @@
   flex-direction: column;
   row-gap: var(--space-3);
   margin-block-end: var(--space-8);
+  width: 100%;
 }
 
 .resumeBenefit {
@@ -1174,6 +1185,74 @@
 .resumeDownloadBtn {
   display: inline-flex;
   align-items: center;
+}
+
+.resumeVisualPreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.resumeImageWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 240px;
+  aspect-ratio: 1 / 1.414;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  background-color: #ffffff;
+}
+
+.resumeImageWrapper:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-lg), 0 0 20px var(--color-accent-glow);
+  border-color: var(--color-accent);
+}
+
+.resumePreviewImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.resumePreviewOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.resumeImageWrapper:hover .resumePreviewOverlay {
+  opacity: 1;
+}
+
+.resumePreviewZoomIcon {
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-full);
+  color: var(--fg-app);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-md);
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.resumeImageWrapper:hover .resumePreviewZoomIcon {
+  transform: scale(1);
 }
 
 .noDataText {
