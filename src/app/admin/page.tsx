@@ -179,6 +179,8 @@ export default function AdminDashboard() {
       bio: 'I am a passionate Computer Science student focusing on modern full-stack web development. I love building responsive interfaces, learning new frameworks, and solving algorithmic problems.',
       avatar_url: 'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz',
       avatar_url_about: 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
+      resume_url: '/resume.pdf',
+      resume_preview_url: 'https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y',
       email: 'abc@gmail.com',
       github_url: 'https://github.com',
       linkedin_url: 'https://linkedin.com',
@@ -198,6 +200,14 @@ export default function AdminDashboard() {
     }
     if (!cachedProfile.location) {
       cachedProfile.location = 'New York City, NY';
+      needsUpdate = true;
+    }
+    if (!cachedProfile.resume_url) {
+      cachedProfile.resume_url = '/resume.pdf';
+      needsUpdate = true;
+    }
+    if (!cachedProfile.resume_preview_url) {
+      cachedProfile.resume_preview_url = 'https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y';
       needsUpdate = true;
     }
     if (cachedProfile.avatar_url && cachedProfile.avatar_url.includes('unsplash.com')) {
@@ -336,6 +346,7 @@ export default function AdminDashboard() {
         avatar_url: profile.avatar_url,
         avatar_url_about: profile.avatar_url_about,
         resume_url: profile.resume_url,
+        resume_preview_url: profile.resume_preview_url,
         email: profile.email,
         github_url: profile.github_url,
         linkedin_url: profile.linkedin_url,
@@ -901,6 +912,7 @@ export default function AdminDashboard() {
           avatar_url: p.avatar_url,
           avatar_url_about: p.avatar_url_about,
           resume_url: p.resume_url,
+          resume_preview_url: p.resume_preview_url,
           email: p.email,
           github_url: p.github_url,
           linkedin_url: p.linkedin_url,
@@ -1195,7 +1207,7 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+              <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(3, 1fr)' }}>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Hero Avatar URL</label>
                   <input
@@ -1223,14 +1235,27 @@ export default function AdminDashboard() {
                     className={styles.formInput}
                   />
                 </div>
+              </div>
+
+              <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(2, 1fr)', marginBlockStart: '1rem' }}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Resume URL</label>
+                  <label className={styles.formLabel}>Resume PDF URL</label>
                   <input
                     type="text"
                     value={profile.resume_url || ''}
                     onChange={(e) => setProfile({ ...profile, resume_url: e.target.value })}
                     className={styles.formInput}
                     placeholder="e.g. /resume.pdf"
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Resume Preview Image URL</label>
+                  <input
+                    type="text"
+                    value={profile.resume_preview_url || ''}
+                    onChange={(e) => setProfile({ ...profile, resume_preview_url: e.target.value })}
+                    className={styles.formInput}
+                    placeholder="e.g. https://lh3.googleusercontent.com/d/..."
                   />
                 </div>
               </div>

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.profile (
     linkedin_url TEXT,
     twitter_url TEXT,
     location TEXT DEFAULT 'New York City, NY',
+    resume_preview_url TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -107,7 +108,7 @@ CREATE POLICY "Allow authenticated users to modify messages"
     WITH CHECK (true);
 
 -- Insert dummy data for initialization (optional, helpful for preview)
-INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, resume_url, github_url, linkedin_url, email, location)
+INSERT INTO public.profile (name, role, bio, avatar_url, avatar_url_about, resume_url, resume_preview_url, github_url, linkedin_url, email, location)
 VALUES (
     'Shanmuga Nathan Manavalan', 
     'Computer Science Student & Aspiring Software Engineer', 
@@ -115,6 +116,7 @@ VALUES (
     'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz',
     'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
     '/resume.pdf',
+    'https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y',
     'https://github.com',
     'https://linkedin.com',
     'spidey@ny.com',

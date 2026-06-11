@@ -16,6 +16,7 @@ const MOCK_PROFILE = {
   avatar_url: 'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz',
   avatar_url_about: 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
   resume_url: '/resume.pdf',
+  resume_preview_url: 'https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y',
   email: 'abc@gmail.com',
   github_url: 'https://github.com',
   linkedin_url: 'https://linkedin.com',
@@ -125,6 +126,7 @@ export interface Profile {
   avatar_url?: string;
   avatar_url_about?: string;
   resume_url?: string;
+  resume_preview_url?: string;
   email?: string;
   github_url?: string;
   linkedin_url?: string;
