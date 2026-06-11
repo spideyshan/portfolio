@@ -1,4 +1,4 @@
-import { getProfile, getProjects, getSkills } from '@/lib/supabase';
+import { getProfile, getProjects, getSkills, getEducation, getAchievements, getCertifications } from '@/lib/supabase';
 import ProjectGrid from '@/components/ProjectGrid';
 import ContactForm from '@/components/ContactForm';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -16,10 +16,13 @@ const getProficiencyLabel = (pct: number): string => {
 
 export default async function Home() {
   // Fetch data concurrently on the server
-  const [profile, projects, skills] = await Promise.all([
+  const [profile, projects, skills, education, achievements, certifications] = await Promise.all([
     getProfile(),
     getProjects(),
     getSkills(),
+    getEducation(),
+    getAchievements(),
+    getCertifications(),
   ]);
 
   // Group skills by category
@@ -47,32 +50,42 @@ export default async function Home() {
               </a>
             </li>
             <li>
+              <a href="#skills" className={styles.navLink}>
+                Tech Stack
+              </a>
+            </li>
+            <li>
               <a href="#projects" className={styles.navLink}>
                 Projects
               </a>
             </li>
             <li>
-              <a href="#skills" className={styles.navLink}>
-                Skills
+              <a href="#education" className={styles.navLink}>
+                Education
               </a>
             </li>
+            <li>
+              <a href="#achievements" className={styles.navLink}>
+                Achievements
+              </a>
+            </li>
+            <li>
+              <a href="#certifications" className={styles.navLink}>
+                Certifications
+              </a>
+            </li>
+            {profile.resume_url && profile.resume_url !== '#' && (
+              <li>
+                <a href="#resume" className={styles.navLink}>
+                  Resume
+                </a>
+              </li>
+            )}
             <li>
               <a href="#contact" className={styles.navLink}>
                 Contact
               </a>
             </li>
-            {profile.resume_url && profile.resume_url !== '#' && (
-              <li>
-                <a 
-                  href={profile.resume_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className={styles.navLink}
-                >
-                  Resume
-                </a>
-              </li>
-            )}
           </ul>
           <ThemeToggle />
         </nav>
@@ -195,21 +208,11 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Projects Section */}
-        <section id="projects" className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionTag}>My Works</span>
-            <h2 className={styles.sectionTitle}>Featured Projects</h2>
-          </div>
-          
-          <ProjectGrid initialProjects={projects} />
-        </section>
-
         {/* Skills Section */}
         <section id="skills" className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionTag}>Expertise</span>
-            <h2 className={styles.sectionTitle}>Skills & Technologies</h2>
+            <h2 className={styles.sectionTitle}>Tech Stack</h2>
           </div>
           
           <div className={styles.skillsContainer}>
@@ -236,6 +239,164 @@ export default async function Home() {
             ))}
           </div>
         </section>
+
+        {/* Projects Section */}
+        <section id="projects" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionTag}>My Works</span>
+            <h2 className={styles.sectionTitle}>Featured Projects</h2>
+          </div>
+          
+          <ProjectGrid initialProjects={projects} />
+        </section>
+
+        {/* Education Section */}
+        <section id="education" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionTag}>Academic History</span>
+            <h2 className={styles.sectionTitle}>Education</h2>
+          </div>
+          
+          <div className={styles.educationTimeline}>
+            {education.map((edu) => (
+              <div key={edu.id} className={styles.educationCard}>
+                <div className={styles.educationHeader}>
+                  <div className={styles.educationMain}>
+                    <h3 className={styles.institutionName}>{edu.institution}</h3>
+                    <p className={styles.degreeName}>
+                      {edu.degree} in {edu.field_of_study}
+                    </p>
+                  </div>
+                  <div className={styles.educationMeta}>
+                    <span className={styles.educationPeriod}>
+                      {edu.start_date} — {edu.end_date}
+                    </span>
+                    {edu.gpa && (
+                      <span className={styles.educationGpa}>
+                        GPA: {edu.gpa}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {edu.description && (
+                  <p className={styles.educationDescription}>{edu.description}</p>
+                )}
+              </div>
+            ))}
+            {education.length === 0 && (
+              <p className={styles.noDataText}>No education history added yet.</p>
+            )}
+          </div>
+        </section>
+
+        {/* Achievements Section */}
+        <section id="achievements" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionTag}>Highlights & Awards</span>
+            <h2 className={styles.sectionTitle}>Achievements</h2>
+          </div>
+          
+          <div className={styles.achievementsGrid}>
+            {achievements.map((ach) => (
+              <div key={ach.id} className={styles.achievementCard}>
+                <div className={styles.achievementIconContainer}>
+                  <span className={styles.achievementIcon}>🏆</span>
+                </div>
+                <div className={styles.achievementContent}>
+                  <h3 className={styles.achievementTitle}>{ach.title}</h3>
+                  <div className={styles.achievementMeta}>
+                    <span className={styles.achievementAwarder}>{ach.awarder}</span>
+                    <span className={styles.achievementDate}>{ach.date}</span>
+                  </div>
+                  {ach.description && (
+                    <p className={styles.achievementDescription}>{ach.description}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+            {achievements.length === 0 && (
+              <p className={styles.noDataText}>No achievements added yet.</p>
+            )}
+          </div>
+        </section>
+
+        {/* Certifications Section */}
+        <section id="certifications" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionTag}>Professional Qualifications</span>
+            <h2 className={styles.sectionTitle}>Certifications</h2>
+          </div>
+          
+          <div className={styles.certificationsGrid}>
+            {certifications.map((cert) => (
+              <div key={cert.id} className={styles.certificationCard}>
+                <div className={styles.certIconContainer}>
+                  <span className={styles.certIcon}>📜</span>
+                </div>
+                <div className={styles.certContent}>
+                  <h3 className={styles.certName}>{cert.name}</h3>
+                  <p className={styles.certIssuer}>{cert.issuer}</p>
+                  <span className={styles.certDate}>{cert.date}</span>
+                  {cert.credential_url && (
+                    <a 
+                      href={cert.credential_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={styles.certLink}
+                    >
+                      View Credential ↗
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+            {certifications.length === 0 && (
+              <p className={styles.noDataText}>No certifications added yet.</p>
+            )}
+          </div>
+        </section>
+
+        {/* Resume Section */}
+        {profile.resume_url && profile.resume_url !== '#' && (
+          <section id="resume" className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <span className={styles.sectionTag}>Resume / CV</span>
+              <h2 className={styles.sectionTitle}>My Resume</h2>
+            </div>
+            
+            <div className={styles.resumeContainer}>
+              <div className={styles.resumeContent}>
+                <h3 className={styles.resumeTitle}>Download my print-ready PDF resume</h3>
+                <p className={styles.resumeText}>
+                  Get a comprehensive overview of my technical expertise, project achievements, and educational qualifications formatted for recruiter tracking systems.
+                </p>
+                <div className={styles.resumeBenefits}>
+                  <div className={styles.resumeBenefit}>
+                    <span className={styles.benefitIcon}>✓</span>
+                    <span>Single-page, ATS-optimized layout</span>
+                  </div>
+                  <div className={styles.resumeBenefit}>
+                    <span className={styles.benefitIcon}>✓</span>
+                    <span>Includes contact, core skills, and live project links</span>
+                  </div>
+                  <div className={styles.resumeBenefit}>
+                    <span className={styles.benefitIcon}>✓</span>
+                    <span>Clean styling for offline printing or reading</span>
+                  </div>
+                </div>
+                <a 
+                  href={profile.resume_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className={`${styles.btn} ${styles.btnPrimary} ${styles.resumeDownloadBtn}`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginInlineEnd: '8px' }}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download PDF Resume
+                </a>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Contact Section */}
         <section id="contact" className={styles.section}>

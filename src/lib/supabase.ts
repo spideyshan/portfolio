@@ -66,6 +66,58 @@ const MOCK_SKILLS = [
   { id: '7', name: 'Figma', category: 'Design', proficiency: 75 }
 ];
 
+const MOCK_EDUCATION = [
+  {
+    id: '1',
+    institution: 'New York University',
+    degree: 'Bachelor of Science',
+    field_of_study: 'Computer Science',
+    start_date: '2023',
+    end_date: '2027',
+    gpa: '3.9 / 4.0',
+    description: 'Focused on Software Engineering, Databases, and Web Development. Active member of the NYU Computer Science Club.',
+    sort_order: 1
+  }
+];
+
+const MOCK_ACHIEVEMENTS = [
+  {
+    id: '1',
+    title: '1st Place - NYU Hackathon',
+    awarder: 'NYU Tech Club',
+    date: 'Oct 2025',
+    description: 'Built a real-time smart recycling tracker using Next.js and Supabase, competing against 50+ teams.',
+    sort_order: 1
+  },
+  {
+    id: '2',
+    title: 'Dean\'s List',
+    awarder: 'NYU Department of Computer Science',
+    date: 'June 2025',
+    description: 'Recognized for maintaining a GPA of 3.85 or higher during the academic year.',
+    sort_order: 2
+  }
+];
+
+const MOCK_CERTIFICATIONS = [
+  {
+    id: '1',
+    name: 'AWS Certified Cloud Practitioner',
+    issuer: 'Amazon Web Services',
+    date: 'Jan 2026',
+    credential_url: 'https://aws.amazon.com',
+    sort_order: 1
+  },
+  {
+    id: '2',
+    name: 'Google Cloud Digital Leader',
+    issuer: 'Google Cloud',
+    date: 'Nov 2025',
+    credential_url: 'https://cloud.google.com',
+    sort_order: 2
+  }
+];
+
 export interface Profile {
   name: string;
   role: string;
@@ -96,6 +148,36 @@ export interface Skill {
   name: string;
   category: string;
   proficiency: number;
+}
+
+export interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  field_of_study: string;
+  start_date: string;
+  end_date: string;
+  gpa?: string;
+  description?: string;
+  sort_order: number;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  awarder: string;
+  date: string;
+  description?: string;
+  sort_order: number;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  credential_url?: string;
+  sort_order: number;
 }
 
 export const isSupabaseConfigured = (): boolean => {
@@ -162,6 +244,69 @@ export async function getSkills(): Promise<Skill[]> {
   } catch (err) {
     console.error('Error in getSkills:', err);
     return MOCK_SKILLS;
+  }
+}
+
+export async function getEducation(): Promise<Education[]> {
+  if (!supabase) {
+    return MOCK_EDUCATION;
+  }
+  try {
+    const { data, error } = await supabase
+      .from('education')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    
+    if (error || !data || data.length === 0) {
+      console.warn('Could not fetch education from Supabase, using mock data:', error);
+      return MOCK_EDUCATION;
+    }
+    return data;
+  } catch (err) {
+    console.error('Error in getEducation:', err);
+    return MOCK_EDUCATION;
+  }
+}
+
+export async function getAchievements(): Promise<Achievement[]> {
+  if (!supabase) {
+    return MOCK_ACHIEVEMENTS;
+  }
+  try {
+    const { data, error } = await supabase
+      .from('achievements')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    
+    if (error || !data || data.length === 0) {
+      console.warn('Could not fetch achievements from Supabase, using mock data:', error);
+      return MOCK_ACHIEVEMENTS;
+    }
+    return data;
+  } catch (err) {
+    console.error('Error in getAchievements:', err);
+    return MOCK_ACHIEVEMENTS;
+  }
+}
+
+export async function getCertifications(): Promise<Certification[]> {
+  if (!supabase) {
+    return MOCK_CERTIFICATIONS;
+  }
+  try {
+    const { data, error } = await supabase
+      .from('certifications')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    
+    if (error || !data || data.length === 0) {
+      console.warn('Could not fetch certifications from Supabase, using mock data:', error);
+      return MOCK_CERTIFICATIONS;
+    }
+    return data;
+  } catch (err) {
+    console.error('Error in getCertifications:', err);
+    return MOCK_CERTIFICATIONS;
   }
 }
 

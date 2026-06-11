@@ -160,3 +160,75 @@ VALUES
 ('Supabase / PostgreSQL', 'Backend', 88, 5),
 ('Git / GitHub Actions', 'Tools', 85, 6),
 ('Figma', 'Design', 75, 7) ON CONFLICT DO NOTHING;
+
+-- Create table for Education
+CREATE TABLE IF NOT EXISTS public.education (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    institution TEXT NOT NULL,
+    degree TEXT NOT NULL,
+    field_of_study TEXT NOT NULL,
+    start_date TEXT NOT NULL,
+    end_date TEXT NOT NULL,
+    gpa TEXT,
+    description TEXT,
+    sort_order INTEGER DEFAULT 0 NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create table for Achievements
+CREATE TABLE IF NOT EXISTS public.achievements (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    awarder TEXT NOT NULL,
+    date TEXT NOT NULL,
+    description TEXT,
+    sort_order INTEGER DEFAULT 0 NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create table for Certifications
+CREATE TABLE IF NOT EXISTS public.certifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    issuer TEXT NOT NULL,
+    date TEXT NOT NULL,
+    credential_url TEXT,
+    sort_order INTEGER DEFAULT 0 NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Enable Row Level Security (RLS)
+ALTER TABLE public.education ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.achievements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.certifications ENABLE ROW LEVEL SECURITY;
+
+-- Create Policies (Public Access)
+CREATE POLICY "Allow public read access to education" ON public.education FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to achievements" ON public.achievements FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to certifications" ON public.certifications FOR SELECT USING (true);
+
+-- Create Policies (Authenticated Admin Access)
+CREATE POLICY "Allow authenticated users to modify education" ON public.education FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow authenticated users to modify achievements" ON public.achievements FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow authenticated users to modify certifications" ON public.certifications FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Insert dummy data for Education
+INSERT INTO public.education (institution, degree, field_of_study, start_date, end_date, gpa, description, sort_order)
+VALUES 
+('New York University', 'Bachelor of Science', 'Computer Science', '2023', '2027', '3.9 / 4.0', 'Focused on Software Engineering, Databases, and Web Development. Active member of the NYU Computer Science Club.', 1)
+ON CONFLICT DO NOTHING;
+
+-- Insert dummy data for Achievements
+INSERT INTO public.achievements (title, awarder, date, description, sort_order)
+VALUES 
+('1st Place - NYU Hackathon', 'NYU Tech Club', 'Oct 2025', 'Built a real-time smart recycling tracker using Next.js and Supabase, competing against 50+ teams.', 1),
+('Dean\'s List', 'NYU Department of Computer Science', 'June 2025', 'Recognized for maintaining a GPA of 3.85 or higher during the academic year.', 2)
+ON CONFLICT DO NOTHING;
+
+-- Insert dummy data for Certifications
+INSERT INTO public.certifications (name, issuer, date, credential_url, sort_order)
+VALUES 
+('AWS Certified Cloud Practitioner', 'Amazon Web Services', 'Jan 2026', 'https://aws.amazon.com', 1),
+('Google Cloud Digital Leader', 'Google Cloud', 'Nov 2025', 'https://cloud.google.com', 2)
+ON CONFLICT DO NOTHING;
+

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getProfile, getProjects, getSkills } from '@/lib/supabase';
+import { getProfile, getProjects, getSkills, getEducation, getAchievements, getCertifications } from '@/lib/supabase';
 
 // Simple types for local chat history
 interface HistoryItem {
@@ -42,12 +42,26 @@ async function handleDemoMode(message: string): Promise<string> {
     return `Yes! Shanmuga is actively seeking summer internships and junior software engineering roles. He has a solid foundation in computer science and hands-on experience building full-stack web apps.`;
   }
 
-  if (msg.includes('gpa') || msg.includes('grade') || msg.includes('cgpa') || msg.includes('education') || msg.includes('g.p.a.')) {
-    return `Shanmuga is a Computer Science student with a Cumulative GPA of **9.0**! He has demonstrated strong academic and practical engineering skills.`;
+  if (msg.includes('education') || msg.includes('university') || msg.includes('study') || msg.includes('degree') || msg.includes('school') || msg.includes('college') || msg.includes('gpa') || msg.includes('grade') || msg.includes('cgpa')) {
+    const edu = await getEducation();
+    const eduList = edu.map((e) => `- ${e.degree} in ${e.field_of_study} at ${e.institution} (${e.start_date} - ${e.end_date}, GPA: ${e.gpa || 'N/A'})`).join('\n');
+    return `Shanmuga Nathan Manavalan's educational background is:\n${eduList}`;
+  }
+
+  if (msg.includes('cert') || msg.includes('licens') || msg.includes('course') || msg.includes('credent')) {
+    const certs = await getCertifications();
+    const certsList = certs.map((c) => `- ${c.name} by ${c.issuer} (${c.date})`).join('\n');
+    return `Shanmuga holds the following certifications:\n${certsList}`;
+  }
+
+  if (msg.includes('achiev') || msg.includes('award') || msg.includes('honor') || msg.includes('contest') || msg.includes('hackathon')) {
+    const achs = await getAchievements();
+    const achsList = achs.map((a) => `- ${a.title} (${a.awarder}, ${a.date}): ${a.description || ''}`).join('\n');
+    return `Here are some of Shanmuga's key achievements:\n${achsList}`;
   }
 
   if (msg.includes('hello') || msg.includes('hi ') || msg.includes('hey') || msg.includes('greet')) {
-    return `Hello! 👋 I'm Shanmuga's portfolio chatbot. Feel free to ask me about his skills, projects, contact info, or GPA! (Currently operating in Demo Mode).`;
+    return `Hello! 👋 I'm Shanmuga's portfolio chatbot. Feel free to ask me about his skills, projects, education, achievements, certifications, or contact info! (Currently operating in Demo Mode).`;
   }
 
   return `Thanks for asking! (Note: I'm currently running in **Demo Mode** because no \`GEMINI_API_KEY\` is configured). Shanmuga is a skilled developer with experience in Next.js, Supabase, and CSS. Check out his projects on this page!`;
@@ -70,15 +84,21 @@ export async function POST(req: Request) {
     }
 
     // Fetch portfolio context from Supabase concurrently
-    const [profile, projects, skills] = await Promise.all([
+    const [profile, projects, skills, education, achievements, certifications] = await Promise.all([
       getProfile(),
       getProjects(),
       getSkills(),
+      getEducation(),
+      getAchievements(),
+      getCertifications(),
     ]);
 
     // Construct system instructions with portfolio context
     const skillsListStr = skills.map((s) => `- ${s.name} (${s.category}, proficiency: ${getProficiencyLabel(s.proficiency)})`).join('\n');
     const projectsListStr = projects.map((p) => `- ${p.title}: ${p.description} (Tags: ${p.tags.join(', ')})`).join('\n');
+    const educationListStr = education.map((e) => `- ${e.degree} in ${e.field_of_study} at ${e.institution} (${e.start_date} - ${e.end_date}, GPA: ${e.gpa || 'N/A'}). ${e.description || ''}`).join('\n');
+    const achievementsListStr = achievements.map((a) => `- ${a.title} awarded by ${a.awarder} (${a.date}): ${a.description || ''}`).join('\n');
+    const certificationsListStr = certifications.map((c) => `- ${c.name} issued by ${c.issuer} (${c.date}). Credential: ${c.credential_url || 'N/A'}`).join('\n');
 
     const systemInstruction = `
 You are the personal AI Assistant for Shanmuga Nathan Manavalan's portfolio website.
@@ -99,6 +119,15 @@ ${skillsListStr}
 
 **Projects**:
 ${projectsListStr}
+
+**Education**:
+${educationListStr}
+
+**Achievements**:
+${achievementsListStr}
+
+**Certifications**:
+${certificationsListStr}
 
 **Rules for your replies**:
 1. Be polite, concise, and helpful.

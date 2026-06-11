@@ -7,7 +7,10 @@ import {
   isSupabaseConfigured, 
   Profile, 
   Project, 
-  Skill 
+  Skill,
+  Education,
+  Achievement,
+  Certification
 } from '@/lib/supabase';
 import styles from './admin.module.css';
 
@@ -39,18 +42,24 @@ export default function AdminDashboard() {
   const [authLoading, setAuthLoading] = useState(true);
   const [isDemo, setIsDemo] = useState(false);
   const [hasLocalData, setHasLocalData] = useState(false);
-  const [activeTab, setActiveTab] = useState<'profile' | 'projects' | 'skills' | 'messages'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'projects' | 'skills' | 'education' | 'achievements' | 'certifications' | 'messages'>('profile');
   const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
   // Core Data States
   const [profile, setProfile] = useState<Profile>({ name: '', role: '', bio: '' });
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [education, setEducation] = useState<Education[]>([]);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
 
   // CRUD Editing States
   const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null);
   const [editingSkill, setEditingSkill] = useState<Partial<Skill> | null>(null);
+  const [editingEducation, setEditingEducation] = useState<Partial<Education> | null>(null);
+  const [editingAchievement, setEditingAchievement] = useState<Partial<Achievement> | null>(null);
+  const [editingCertification, setEditingCertification] = useState<Partial<Certification> | null>(null);
 
   // Category Management States
   const [emptyCategories, setEmptyCategories] = useState<string[]>([]);
@@ -134,6 +143,18 @@ export default function AdminDashboard() {
       const { data: skillData } = await supabase.from('skills').select('*').order('sort_order', { ascending: true });
       if (skillData) setSkills(skillData);
 
+      // Fetch Education
+      const { data: eduData } = await supabase.from('education').select('*').order('sort_order', { ascending: true });
+      if (eduData) setEducation(eduData);
+
+      // Fetch Achievements
+      const { data: achData } = await supabase.from('achievements').select('*').order('sort_order', { ascending: true });
+      if (achData) setAchievements(achData);
+
+      // Fetch Certifications
+      const { data: certData } = await supabase.from('certifications').select('*').order('sort_order', { ascending: true });
+      if (certData) setCertifications(certData);
+
       // Fetch Messages
       const { data: msgData } = await supabase.from('messages').select('*').order('created_at', { ascending: false });
       if (msgData) setMessages(msgData);
@@ -214,6 +235,58 @@ export default function AdminDashboard() {
       { id: '1', name: 'React / Next.js', category: 'Frontend', proficiency: 95 },
       { id: '2', name: 'TypeScript', category: 'Frontend', proficiency: 90 },
       { id: '3', name: 'CSS / CSS Modules', category: 'Frontend', proficiency: 98 }
+    ]));
+
+    setEducation(getOrInit('portfolio_mock_education', [
+      {
+        id: '1',
+        institution: 'New York University',
+        degree: 'Bachelor of Science',
+        field_of_study: 'Computer Science',
+        start_date: '2023',
+        end_date: '2027',
+        gpa: '3.9 / 4.0',
+        description: 'Focused on Software Engineering, Databases, and Web Development. Active member of the NYU Computer Science Club.',
+        sort_order: 1
+      }
+    ]));
+
+    setAchievements(getOrInit('portfolio_mock_achievements', [
+      {
+        id: '1',
+        title: '1st Place - NYU Hackathon',
+        awarder: 'NYU Tech Club',
+        date: 'Oct 2025',
+        description: 'Built a real-time smart recycling tracker using Next.js and Supabase, competing against 50+ teams.',
+        sort_order: 1
+      },
+      {
+        id: '2',
+        title: 'Dean\'s List',
+        awarder: 'NYU Department of Computer Science',
+        date: 'June 2025',
+        description: 'Recognized for maintaining a GPA of 3.85 or higher during the academic year.',
+        sort_order: 2
+      }
+    ]));
+
+    setCertifications(getOrInit('portfolio_mock_certifications', [
+      {
+        id: '1',
+        name: 'AWS Certified Cloud Practitioner',
+        issuer: 'Amazon Web Services',
+        date: 'Jan 2026',
+        credential_url: 'https://aws.amazon.com',
+        sort_order: 1
+      },
+      {
+        id: '2',
+        name: 'Google Cloud Digital Leader',
+        issuer: 'Google Cloud',
+        date: 'Nov 2025',
+        credential_url: 'https://cloud.google.com',
+        sort_order: 2
+      }
     ]));
 
     setMessages(getOrInit('portfolio_mock_messages', [
@@ -457,6 +530,249 @@ export default function AdminDashboard() {
   };
 
   // ==========================================
+  // EDUCATION CRUD ACTION HANDLERS
+  // ==========================================
+  const handleEducationSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingEducation?.institution || !editingEducation.degree || !editingEducation.field_of_study) {
+      showStatus('error', 'Institution, degree, and field of study are required.');
+      return;
+    }
+
+    const eduData = {
+      ...editingEducation,
+      sort_order: editingEducation.sort_order || 0,
+    };
+
+    if (isDemo) {
+      let updated;
+      if (eduData.id) {
+        updated = education.map((e) => e.id === eduData.id ? (eduData as Education) : e);
+      } else {
+        const newEdu = { ...eduData, id: Date.now().toString() } as Education;
+        updated = [...education, newEdu];
+      }
+      setEducation(updated);
+      localStorage.setItem('portfolio_mock_education', JSON.stringify(updated));
+      setEditingEducation(null);
+      showStatus('success', 'Demo education saved!');
+      return;
+    }
+
+    if (!supabase) return;
+    try {
+      const { error } = await supabase.from('education').upsert([
+        {
+          id: eduData.id || undefined,
+          institution: eduData.institution,
+          degree: eduData.degree,
+          field_of_study: eduData.field_of_study,
+          start_date: eduData.start_date || '',
+          end_date: eduData.end_date || '',
+          gpa: eduData.gpa,
+          description: eduData.description,
+          sort_order: eduData.sort_order
+        }
+      ]);
+
+      if (error) {
+        showStatus('error', `Error: ${error.message}`);
+      } else {
+        showStatus('success', 'Education saved to Supabase!');
+        setEditingEducation(null);
+        loadSupabaseData();
+      }
+    } catch (err: any) {
+      showStatus('error', err.message || 'Failed to save education.');
+    }
+  };
+
+  const deleteEducation = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this education record?')) return;
+
+    if (isDemo) {
+      const updated = education.filter((e) => e.id !== id);
+      setEducation(updated);
+      localStorage.setItem('portfolio_mock_education', JSON.stringify(updated));
+      showStatus('success', 'Demo education deleted!');
+      return;
+    }
+
+    if (!supabase) return;
+    try {
+      const { error } = await supabase.from('education').delete().eq('id', id);
+      if (error) {
+        showStatus('error', `Delete failed: ${error.message}`);
+      } else {
+        showStatus('success', 'Education record deleted!');
+        loadSupabaseData();
+      }
+    } catch (err: any) {
+      showStatus('error', err.message);
+    }
+  };
+
+  // ==========================================
+  // ACHIEVEMENTS CRUD ACTION HANDLERS
+  // ==========================================
+  const handleAchievementSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAchievement?.title || !editingAchievement.awarder || !editingAchievement.date) {
+      showStatus('error', 'Title, awarder, and date are required.');
+      return;
+    }
+
+    const achData = {
+      ...editingAchievement,
+      sort_order: editingAchievement.sort_order || 0,
+    };
+
+    if (isDemo) {
+      let updated;
+      if (achData.id) {
+        updated = achievements.map((a) => a.id === achData.id ? (achData as Achievement) : a);
+      } else {
+        const newAch = { ...achData, id: Date.now().toString() } as Achievement;
+        updated = [...achievements, newAch];
+      }
+      setAchievements(updated);
+      localStorage.setItem('portfolio_mock_achievements', JSON.stringify(updated));
+      setEditingAchievement(null);
+      showStatus('success', 'Demo achievement saved!');
+      return;
+    }
+
+    if (!supabase) return;
+    try {
+      const { error } = await supabase.from('achievements').upsert([
+        {
+          id: achData.id || undefined,
+          title: achData.title,
+          awarder: achData.awarder,
+          date: achData.date,
+          description: achData.description,
+          sort_order: achData.sort_order
+        }
+      ]);
+
+      if (error) {
+        showStatus('error', `Error: ${error.message}`);
+      } else {
+        showStatus('success', 'Achievement saved to Supabase!');
+        setEditingAchievement(null);
+        loadSupabaseData();
+      }
+    } catch (err: any) {
+      showStatus('error', err.message || 'Failed to save achievement.');
+    }
+  };
+
+  const deleteAchievement = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this achievement record?')) return;
+
+    if (isDemo) {
+      const updated = achievements.filter((a) => a.id !== id);
+      setAchievements(updated);
+      localStorage.setItem('portfolio_mock_achievements', JSON.stringify(updated));
+      showStatus('success', 'Demo achievement deleted!');
+      return;
+    }
+
+    if (!supabase) return;
+    try {
+      const { error } = await supabase.from('achievements').delete().eq('id', id);
+      if (error) {
+        showStatus('error', `Delete failed: ${error.message}`);
+      } else {
+        showStatus('success', 'Achievement record deleted!');
+        loadSupabaseData();
+      }
+    } catch (err: any) {
+      showStatus('error', err.message);
+    }
+  };
+
+  // ==========================================
+  // CERTIFICATIONS CRUD ACTION HANDLERS
+  // ==========================================
+  const handleCertificationSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCertification?.name || !editingCertification.issuer || !editingCertification.date) {
+      showStatus('error', 'Name, issuer, and date are required.');
+      return;
+    }
+
+    const certData = {
+      ...editingCertification,
+      sort_order: editingCertification.sort_order || 0,
+    };
+
+    if (isDemo) {
+      let updated;
+      if (certData.id) {
+        updated = certifications.map((c) => c.id === certData.id ? (certData as Certification) : c);
+      } else {
+        const newCert = { ...certData, id: Date.now().toString() } as Certification;
+        updated = [...certifications, newCert];
+      }
+      setCertifications(updated);
+      localStorage.setItem('portfolio_mock_certifications', JSON.stringify(updated));
+      setEditingCertification(null);
+      showStatus('success', 'Demo certification saved!');
+      return;
+    }
+
+    if (!supabase) return;
+    try {
+      const { error } = await supabase.from('certifications').upsert([
+        {
+          id: certData.id || undefined,
+          name: certData.name,
+          issuer: certData.issuer,
+          date: certData.date,
+          credential_url: certData.credential_url,
+          sort_order: certData.sort_order
+        }
+      ]);
+
+      if (error) {
+        showStatus('error', `Error: ${error.message}`);
+      } else {
+        showStatus('success', 'Certification saved to Supabase!');
+        setEditingCertification(null);
+        loadSupabaseData();
+      }
+    } catch (err: any) {
+      showStatus('error', err.message || 'Failed to save certification.');
+    }
+  };
+
+  const deleteCertification = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this certification record?')) return;
+
+    if (isDemo) {
+      const updated = certifications.filter((c) => c.id !== id);
+      setCertifications(updated);
+      localStorage.setItem('portfolio_mock_certifications', JSON.stringify(updated));
+      showStatus('success', 'Demo certification deleted!');
+      return;
+    }
+
+    if (!supabase) return;
+    try {
+      const { error } = await supabase.from('certifications').delete().eq('id', id);
+      if (error) {
+        showStatus('error', `Delete failed: ${error.message}`);
+      } else {
+        showStatus('success', 'Certification record deleted!');
+        loadSupabaseData();
+      }
+    } catch (err: any) {
+      showStatus('error', err.message);
+    }
+  };
+
+  // ==========================================
   // MESSAGE HANDLERS
   // ==========================================
   const deleteMessage = async (id: string) => {
@@ -661,6 +977,69 @@ export default function AdminDashboard() {
         }
       }
 
+      // 5. Sync Education
+      const localEducation = localStorage.getItem('portfolio_mock_education');
+      if (localEducation) {
+        const eduList = JSON.parse(localEducation) as Education[];
+        const { error: clearEduError } = await supabase.from('education').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        if (clearEduError) throw new Error(`Failed to clear education: ${clearEduError.message}`);
+
+        for (const e of eduList) {
+          const eduToUpsert = {
+            institution: e.institution,
+            degree: e.degree,
+            field_of_study: e.field_of_study,
+            start_date: e.start_date,
+            end_date: e.end_date,
+            gpa: e.gpa,
+            description: e.description,
+            sort_order: e.sort_order || 0
+          };
+          const { error: eduError } = await supabase.from('education').insert(eduToUpsert);
+          if (eduError) throw new Error(`Education "${e.institution}" sync failed: ${eduError.message}`);
+        }
+      }
+
+      // 6. Sync Achievements
+      const localAchievements = localStorage.getItem('portfolio_mock_achievements');
+      if (localAchievements) {
+        const achList = JSON.parse(localAchievements) as Achievement[];
+        const { error: clearAchError } = await supabase.from('achievements').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        if (clearAchError) throw new Error(`Failed to clear achievements: ${clearAchError.message}`);
+
+        for (const a of achList) {
+          const achToUpsert = {
+            title: a.title,
+            awarder: a.awarder,
+            date: a.date,
+            description: a.description,
+            sort_order: a.sort_order || 0
+          };
+          const { error: achError } = await supabase.from('achievements').insert(achToUpsert);
+          if (achError) throw new Error(`Achievement "${a.title}" sync failed: ${achError.message}`);
+        }
+      }
+
+      // 7. Sync Certifications
+      const localCertifications = localStorage.getItem('portfolio_mock_certifications');
+      if (localCertifications) {
+        const certList = JSON.parse(localCertifications) as Certification[];
+        const { error: clearCertError } = await supabase.from('certifications').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        if (clearCertError) throw new Error(`Failed to clear certifications: ${clearCertError.message}`);
+
+        for (const c of certList) {
+          const certToUpsert = {
+            name: c.name,
+            issuer: c.issuer,
+            date: c.date,
+            credential_url: c.credential_url,
+            sort_order: c.sort_order || 0
+          };
+          const { error: certError } = await supabase.from('certifications').insert(certToUpsert);
+          if (certError) throw new Error(`Certification "${c.name}" sync failed: ${certError.message}`);
+        }
+      }
+
       showStatus('success', 'Successfully synchronized all local data to Supabase!');
       await loadSupabaseData();
     } catch (err: any) {
@@ -732,25 +1111,43 @@ export default function AdminDashboard() {
       {/* Tabs list */}
       <nav className={styles.tabNav}>
         <button 
-          onClick={() => { setActiveTab('profile'); setEditingProject(null); setEditingSkill(null); }} 
+          onClick={() => { setActiveTab('profile'); setEditingProject(null); setEditingSkill(null); setEditingEducation(null); setEditingAchievement(null); setEditingCertification(null); }} 
           className={`${styles.tabBtn} ${activeTab === 'profile' ? styles.tabBtnActive : ''}`}
         >
           Profile details
         </button>
         <button 
-          onClick={() => { setActiveTab('projects'); setEditingProject(null); setEditingSkill(null); }} 
+          onClick={() => { setActiveTab('projects'); setEditingProject(null); setEditingSkill(null); setEditingEducation(null); setEditingAchievement(null); setEditingCertification(null); }} 
           className={`${styles.tabBtn} ${activeTab === 'projects' ? styles.tabBtnActive : ''}`}
         >
           Manage Projects
         </button>
         <button 
-          onClick={() => { setActiveTab('skills'); setEditingProject(null); setEditingSkill(null); }} 
+          onClick={() => { setActiveTab('skills'); setEditingProject(null); setEditingSkill(null); setEditingEducation(null); setEditingAchievement(null); setEditingCertification(null); }} 
           className={`${styles.tabBtn} ${activeTab === 'skills' ? styles.tabBtnActive : ''}`}
         >
           Manage Skills
         </button>
         <button 
-          onClick={() => { setActiveTab('messages'); setEditingProject(null); setEditingSkill(null); }} 
+          onClick={() => { setActiveTab('education'); setEditingProject(null); setEditingSkill(null); setEditingEducation(null); setEditingAchievement(null); setEditingCertification(null); }} 
+          className={`${styles.tabBtn} ${activeTab === 'education' ? styles.tabBtnActive : ''}`}
+        >
+          Manage Education
+        </button>
+        <button 
+          onClick={() => { setActiveTab('achievements'); setEditingProject(null); setEditingSkill(null); setEditingEducation(null); setEditingAchievement(null); setEditingCertification(null); }} 
+          className={`${styles.tabBtn} ${activeTab === 'achievements' ? styles.tabBtnActive : ''}`}
+        >
+          Manage Achievements
+        </button>
+        <button 
+          onClick={() => { setActiveTab('certifications'); setEditingProject(null); setEditingSkill(null); setEditingEducation(null); setEditingAchievement(null); setEditingCertification(null); }} 
+          className={`${styles.tabBtn} ${activeTab === 'certifications' ? styles.tabBtnActive : ''}`}
+        >
+          Manage Certifications
+        </button>
+        <button 
+          onClick={() => { setActiveTab('messages'); setEditingProject(null); setEditingSkill(null); setEditingEducation(null); setEditingAchievement(null); setEditingCertification(null); }} 
           className={`${styles.tabBtn} ${activeTab === 'messages' ? styles.tabBtnActive : ''}`}
         >
           Inbox ({messages.length})
@@ -1207,6 +1604,467 @@ export default function AdminDashboard() {
 
                   <div>
                     <button type="submit" className={styles.saveBtn}>Save Skill</button>
+                  </div>
+                </form>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* ==========================================
+           TAB: MANAGE EDUCATION
+           ========================================== */}
+        {activeTab === 'education' && (
+          <div>
+            {!editingEducation ? (
+              <div>
+                <div className={styles.sectionHeader} style={{ marginBlockEnd: 'var(--space-8)' }}>
+                  <h2 className={styles.sectionTitle}>Education History</h2>
+                  <button 
+                    onClick={() => setEditingEducation({ institution: '', degree: '', field_of_study: '', start_date: '', end_date: '', gpa: '', description: '', sort_order: (education.length + 1) })} 
+                    className={styles.newBtn}
+                  >
+                    + Add Education
+                  </button>
+                </div>
+
+                <div className={styles.tableWrapper}>
+                  <table className={styles.itemTable}>
+                    <thead className={styles.tableHeader}>
+                      <tr>
+                        <th>Institution</th>
+                        <th>Degree / Field</th>
+                        <th>Period</th>
+                        <th>GPA</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {education.map((edu) => (
+                        <tr key={edu.id} className={styles.tableRow}>
+                          <td className={styles.tableCell} style={{ fontWeight: '600', width: '30%' }}>{edu.institution}</td>
+                          <td className={styles.tableCell} style={{ width: '30%' }}>{edu.degree} in {edu.field_of_study}</td>
+                          <td className={styles.tableCell} style={{ width: '20%' }}>{edu.start_date} - {edu.end_date}</td>
+                          <td className={styles.tableCell} style={{ width: '10%' }}>{edu.gpa || 'N/A'}</td>
+                          <td className={`${styles.tableCell} ${styles.actionCell}`} style={{ width: '10%' }}>
+                            <button 
+                              onClick={() => setEditingEducation(edu)} 
+                              className={`${styles.actionBtn} ${styles.editBtn}`}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => deleteEducation(edu.id)} 
+                              className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {education.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className={styles.tableCell} style={{ textAlign: 'center', color: 'var(--color-muted)' }}>
+                            No education records found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <section className={styles.formSection}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    {editingEducation.id ? 'Edit Education Record' : 'New Education Record'}
+                  </h2>
+                  <button onClick={() => setEditingEducation(null)} className={styles.logoutBtn}>
+                    Cancel
+                  </button>
+                </div>
+
+                <form onSubmit={handleEducationSave} className={styles.formGrid}>
+                  <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Institution Name</label>
+                      <input
+                        type="text"
+                        value={editingEducation.institution || ''}
+                        onChange={(e) => setEditingEducation({ ...editingEducation, institution: e.target.value })}
+                        required
+                        placeholder="e.g. New York University"
+                        className={styles.formInput}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Degree</label>
+                      <input
+                        type="text"
+                        value={editingEducation.degree || ''}
+                        onChange={(e) => setEditingEducation({ ...editingEducation, degree: e.target.value })}
+                        required
+                        placeholder="e.g. Bachelor of Science"
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Field of Study</label>
+                      <input
+                        type="text"
+                        value={editingEducation.field_of_study || ''}
+                        onChange={(e) => setEditingEducation({ ...editingEducation, field_of_study: e.target.value })}
+                        required
+                        placeholder="e.g. Computer Science"
+                        className={styles.formInput}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>GPA</label>
+                      <input
+                        type="text"
+                        value={editingEducation.gpa || ''}
+                        onChange={(e) => setEditingEducation({ ...editingEducation, gpa: e.target.value })}
+                        placeholder="e.g. 3.9 / 4.0"
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Start Date / Year</label>
+                      <input
+                        type="text"
+                        value={editingEducation.start_date || ''}
+                        onChange={(e) => setEditingEducation({ ...editingEducation, start_date: e.target.value })}
+                        required
+                        placeholder="e.g. 2023"
+                        className={styles.formInput}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>End Date / Year (or "Present")</label>
+                      <input
+                        type="text"
+                        value={editingEducation.end_date || ''}
+                        onChange={(e) => setEditingEducation({ ...editingEducation, end_date: e.target.value })}
+                        required
+                        placeholder="e.g. 2027 or Present"
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Description</label>
+                    <textarea
+                      value={editingEducation.description || ''}
+                      onChange={(e) => setEditingEducation({ ...editingEducation, description: e.target.value })}
+                      placeholder="Specializations, courses, or highlights..."
+                      rows={3}
+                      className={styles.formTextarea}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Sort Order</label>
+                    <input
+                      type="number"
+                      value={editingEducation.sort_order !== undefined ? editingEducation.sort_order : 0}
+                      onChange={(e) => setEditingEducation({ ...editingEducation, sort_order: parseInt(e.target.value) || 0 })}
+                      required
+                      className={styles.formInput}
+                    />
+                  </div>
+
+                  <div>
+                    <button type="submit" className={styles.saveBtn}>Save Education</button>
+                  </div>
+                </form>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* ==========================================
+           TAB: MANAGE ACHIEVEMENTS
+           ========================================== */}
+        {activeTab === 'achievements' && (
+          <div>
+            {!editingAchievement ? (
+              <div>
+                <div className={styles.sectionHeader} style={{ marginBlockEnd: 'var(--space-8)' }}>
+                  <h2 className={styles.sectionTitle}>Achievements & Awards</h2>
+                  <button 
+                    onClick={() => setEditingAchievement({ title: '', awarder: '', date: '', description: '', sort_order: (achievements.length + 1) })} 
+                    className={styles.newBtn}
+                  >
+                    + Add Achievement
+                  </button>
+                </div>
+
+                <div className={styles.tableWrapper}>
+                  <table className={styles.itemTable}>
+                    <thead className={styles.tableHeader}>
+                      <tr>
+                        <th>Title</th>
+                        <th>Awarder</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {achievements.map((ach) => (
+                        <tr key={ach.id} className={styles.tableRow}>
+                          <td className={styles.tableCell} style={{ fontWeight: '600', width: '40%' }}>{ach.title}</td>
+                          <td className={styles.tableCell} style={{ width: '30%' }}>{ach.awarder}</td>
+                          <td className={styles.tableCell} style={{ width: '20%' }}>{ach.date}</td>
+                          <td className={`${styles.tableCell} ${styles.actionCell}`} style={{ width: '10%' }}>
+                            <button 
+                              onClick={() => setEditingAchievement(ach)} 
+                              className={`${styles.actionBtn} ${styles.editBtn}`}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => deleteAchievement(ach.id)} 
+                              className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {achievements.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className={styles.tableCell} style={{ textAlign: 'center', color: 'var(--color-muted)' }}>
+                            No achievement records found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <section className={styles.formSection}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    {editingAchievement.id ? 'Edit Achievement' : 'New Achievement'}
+                  </h2>
+                  <button onClick={() => setEditingAchievement(null)} className={styles.logoutBtn}>
+                    Cancel
+                  </button>
+                </div>
+
+                <form onSubmit={handleAchievementSave} className={styles.formGrid}>
+                  <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Achievement Title</label>
+                      <input
+                        type="text"
+                        value={editingAchievement.title || ''}
+                        onChange={(e) => setEditingAchievement({ ...editingAchievement, title: e.target.value })}
+                        required
+                        placeholder="e.g. 1st Place - NYU Hackathon"
+                        className={styles.formInput}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Awarder / Issuer</label>
+                      <input
+                        type="text"
+                        value={editingAchievement.awarder || ''}
+                        onChange={(e) => setEditingAchievement({ ...editingAchievement, awarder: e.target.value })}
+                        required
+                        placeholder="e.g. NYU Tech Club"
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Date</label>
+                      <input
+                        type="text"
+                        value={editingAchievement.date || ''}
+                        onChange={(e) => setEditingAchievement({ ...editingAchievement, date: e.target.value })}
+                        required
+                        placeholder="e.g. Oct 2025"
+                        className={styles.formInput}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Sort Order</label>
+                      <input
+                        type="number"
+                        value={editingAchievement.sort_order !== undefined ? editingAchievement.sort_order : 0}
+                        onChange={(e) => setEditingAchievement({ ...editingAchievement, sort_order: parseInt(e.target.value) || 0 })}
+                        required
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Description</label>
+                    <textarea
+                      value={editingAchievement.description || ''}
+                      onChange={(e) => setEditingAchievement({ ...editingAchievement, description: e.target.value })}
+                      placeholder="Detail of the achievement, score, project details..."
+                      rows={3}
+                      className={styles.formTextarea}
+                    />
+                  </div>
+
+                  <div>
+                    <button type="submit" className={styles.saveBtn}>Save Achievement</button>
+                  </div>
+                </form>
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* ==========================================
+           TAB: MANAGE CERTIFICATIONS
+           ========================================== */}
+        {activeTab === 'certifications' && (
+          <div>
+            {!editingCertification ? (
+              <div>
+                <div className={styles.sectionHeader} style={{ marginBlockEnd: 'var(--space-8)' }}>
+                  <h2 className={styles.sectionTitle}>Certifications</h2>
+                  <button 
+                    onClick={() => setEditingCertification({ name: '', issuer: '', date: '', credential_url: '', sort_order: (certifications.length + 1) })} 
+                    className={styles.newBtn}
+                  >
+                    + Add Certification
+                  </button>
+                </div>
+
+                <div className={styles.tableWrapper}>
+                  <table className={styles.itemTable}>
+                    <thead className={styles.tableHeader}>
+                      <tr>
+                        <th>Name</th>
+                        <th>Issuer</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {certifications.map((cert) => (
+                        <tr key={cert.id} className={styles.tableRow}>
+                          <td className={styles.tableCell} style={{ fontWeight: '600', width: '40%' }}>{cert.name}</td>
+                          <td className={styles.tableCell} style={{ width: '30%' }}>{cert.issuer}</td>
+                          <td className={styles.tableCell} style={{ width: '20%' }}>{cert.date}</td>
+                          <td className={`${styles.tableCell} ${styles.actionCell}`} style={{ width: '10%' }}>
+                            <button 
+                              onClick={() => setEditingCertification(cert)} 
+                              className={`${styles.actionBtn} ${styles.editBtn}`}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => deleteCertification(cert.id)} 
+                              className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {certifications.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className={styles.tableCell} style={{ textAlign: 'center', color: 'var(--color-muted)' }}>
+                            No certifications found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <section className={styles.formSection}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    {editingCertification.id ? 'Edit Certification' : 'New Certification'}
+                  </h2>
+                  <button onClick={() => setEditingCertification(null)} className={styles.logoutBtn}>
+                    Cancel
+                  </button>
+                </div>
+
+                <form onSubmit={handleCertificationSave} className={styles.formGrid}>
+                  <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Certification Name</label>
+                      <input
+                        type="text"
+                        value={editingCertification.name || ''}
+                        onChange={(e) => setEditingCertification({ ...editingCertification, name: e.target.value })}
+                        required
+                        placeholder="e.g. AWS Certified Cloud Practitioner"
+                        className={styles.formInput}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Issuer</label>
+                      <input
+                        type="text"
+                        value={editingCertification.issuer || ''}
+                        onChange={(e) => setEditingCertification({ ...editingCertification, issuer: e.target.value })}
+                        required
+                        placeholder="e.g. Amazon Web Services"
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGridTwoCol} style={{ display: 'grid', gap: '1rem' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Date Issued</label>
+                      <input
+                        type="text"
+                        value={editingCertification.date || ''}
+                        onChange={(e) => setEditingCertification({ ...editingCertification, date: e.target.value })}
+                        required
+                        placeholder="e.g. Jan 2026"
+                        className={styles.formInput}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Sort Order</label>
+                      <input
+                        type="number"
+                        value={editingCertification.sort_order !== undefined ? editingCertification.sort_order : 0}
+                        onChange={(e) => setEditingCertification({ ...editingCertification, sort_order: parseInt(e.target.value) || 0 })}
+                        required
+                        className={styles.formInput}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Credential URL</label>
+                    <input
+                      type="text"
+                      value={editingCertification.credential_url || ''}
+                      onChange={(e) => setEditingCertification({ ...editingCertification, credential_url: e.target.value })}
+                      placeholder="e.g. https://aws.amazon.com/verify/12345"
+                      className={styles.formInput}
+                    />
+                  </div>
+
+                  <div>
+                    <button type="submit" className={styles.saveBtn}>Save Certification</button>
                   </div>
                 </form>
               </section>
