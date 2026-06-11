@@ -338,22 +338,26 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
-      const { error } = await supabase.from('profile').upsert({
-        id: (profile as any).id || undefined,
+      const profileToUpsert: any = {
         name: profile.name,
         role: profile.role,
         bio: profile.bio,
-        avatar_url: profile.avatar_url,
-        avatar_url_about: profile.avatar_url_about,
-        resume_url: profile.resume_url,
-        resume_preview_url: profile.resume_preview_url,
-        email: profile.email,
-        github_url: profile.github_url,
-        linkedin_url: profile.linkedin_url,
-        twitter_url: profile.twitter_url,
-        location: profile.location,
+        avatar_url: profile.avatar_url || null,
+        avatar_url_about: profile.avatar_url_about || null,
+        resume_url: profile.resume_url || null,
+        resume_preview_url: profile.resume_preview_url || null,
+        email: profile.email || null,
+        github_url: profile.github_url || null,
+        linkedin_url: profile.linkedin_url || null,
+        twitter_url: profile.twitter_url || null,
+        location: profile.location || null,
         updated_at: new Date().toISOString()
-      });
+      };
+      if ((profile as any).id) {
+        profileToUpsert.id = (profile as any).id;
+      }
+
+      const { error } = await supabase.from('profile').upsert(profileToUpsert);
 
       if (error) {
         showStatus('error', `Error updating profile: ${error.message}`);
@@ -405,18 +409,20 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
-      const { error } = await supabase.from('projects').upsert([
-        {
-          id: projectData.id || undefined,
-          title: projectData.title,
-          description: projectData.description,
-          tags: projectData.tags,
-          github_url: projectData.github_url,
-          live_url: projectData.live_url,
-          featured: projectData.featured,
-          sort_order: (projectData as any).sort_order || 0
-        }
-      ]);
+      const projToUpsert: any = {
+        title: projectData.title,
+        description: projectData.description,
+        tags: projectData.tags,
+        github_url: projectData.github_url || null,
+        live_url: projectData.live_url || null,
+        featured: projectData.featured,
+        sort_order: (projectData as any).sort_order || 0
+      };
+      if (projectData.id) {
+        projToUpsert.id = projectData.id;
+      }
+
+      const { error } = await supabase.from('projects').upsert([projToUpsert]);
 
       if (error) {
         showStatus('error', `Error: ${error.message}`);
@@ -493,15 +499,17 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
-      const { error } = await supabase.from('skills').upsert([
-        {
-          id: skillData.id || undefined,
-          name: skillData.name,
-          category: skillData.category,
-          proficiency: skillData.proficiency,
-          sort_order: (skillData as any).sort_order || 0
-        }
-      ]);
+      const skillToUpsert: any = {
+        name: skillData.name,
+        category: skillData.category,
+        proficiency: skillData.proficiency,
+        sort_order: (skillData as any).sort_order || 0
+      };
+      if (skillData.id) {
+        skillToUpsert.id = skillData.id;
+      }
+
+      const { error } = await supabase.from('skills').upsert([skillToUpsert]);
 
       if (error) {
         showStatus('error', `Error: ${error.message}`);
@@ -572,19 +580,21 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
-      const { error } = await supabase.from('education').upsert([
-        {
-          id: eduData.id || undefined,
-          institution: eduData.institution,
-          degree: eduData.degree,
-          field_of_study: eduData.field_of_study,
-          start_date: eduData.start_date || '',
-          end_date: eduData.end_date || '',
-          gpa: eduData.gpa,
-          description: eduData.description,
-          sort_order: eduData.sort_order
-        }
-      ]);
+      const eduToUpsert: any = {
+        institution: eduData.institution,
+        degree: eduData.degree,
+        field_of_study: eduData.field_of_study,
+        start_date: eduData.start_date || '',
+        end_date: eduData.end_date || '',
+        gpa: eduData.gpa || null,
+        description: eduData.description || null,
+        sort_order: eduData.sort_order
+      };
+      if (eduData.id) {
+        eduToUpsert.id = eduData.id;
+      }
+
+      const { error } = await supabase.from('education').upsert([eduToUpsert]);
 
       if (error) {
         showStatus('error', `Error: ${error.message}`);
@@ -655,16 +665,18 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
-      const { error } = await supabase.from('achievements').upsert([
-        {
-          id: achData.id || undefined,
-          title: achData.title,
-          awarder: achData.awarder,
-          date: achData.date,
-          description: achData.description,
-          sort_order: achData.sort_order
-        }
-      ]);
+      const achToUpsert: any = {
+        title: achData.title,
+        awarder: achData.awarder,
+        date: achData.date,
+        description: achData.description || null,
+        sort_order: achData.sort_order
+      };
+      if (achData.id) {
+        achToUpsert.id = achData.id;
+      }
+
+      const { error } = await supabase.from('achievements').upsert([achToUpsert]);
 
       if (error) {
         showStatus('error', `Error: ${error.message}`);
@@ -735,16 +747,18 @@ export default function AdminDashboard() {
 
     if (!supabase) return;
     try {
-      const { error } = await supabase.from('certifications').upsert([
-        {
-          id: certData.id || undefined,
-          name: certData.name,
-          issuer: certData.issuer,
-          date: certData.date,
-          credential_url: certData.credential_url,
-          sort_order: certData.sort_order
-        }
-      ]);
+      const certToUpsert: any = {
+        name: certData.name,
+        issuer: certData.issuer,
+        date: certData.date,
+        credential_url: certData.credential_url || null,
+        sort_order: certData.sort_order
+      };
+      if (certData.id) {
+        certToUpsert.id = certData.id;
+      }
+
+      const { error } = await supabase.from('certifications').upsert([certToUpsert]);
 
       if (error) {
         showStatus('error', `Error: ${error.message}`);
