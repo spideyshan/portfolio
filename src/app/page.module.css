@@ -258,24 +258,37 @@
 
 @media (prefers-reduced-motion: no-preference) {
   @supports ((animation-timeline: view()) and (animation-range: entry)) {
-    .section {
-      animation: sectionReveal linear both;
+    .section:nth-of-type(odd) {
+      animation: sectionRevealLeft linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 25%;
+    }
+    
+    .section:nth-of-type(even) {
+      animation: sectionRevealRight linear both;
       animation-timeline: view();
       animation-range: entry 10% cover 25%;
     }
   }
 
   @supports not ((animation-timeline: view()) and (animation-range: entry)) {
-    .section {
+    .section:nth-of-type(odd) {
       opacity: 0;
-      transform: translateY(50px) scale(0.98);
+      transform: translateX(-50px) scale(0.98);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .section:nth-of-type(even) {
+      opacity: 0;
+      transform: translateX(50px) scale(0.98);
       transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
                   transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
     
     .sectionVisible {
       opacity: 1 !important;
-      transform: translateY(0) scale(1) !important;
+      transform: translateX(0) scale(1) !important;
     }
   }
 }
@@ -1508,14 +1521,25 @@
   }
 }
 
-@keyframes sectionReveal {
+@keyframes sectionRevealLeft {
   from {
     opacity: 0;
-    transform: translateY(60px) scale(0.97);
+    transform: translateX(-60px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes sectionRevealRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 
@@ -1567,5 +1591,70 @@
   
   .heroTitle {
     font-size: 2.25rem;
+  }
+}
+
+/* ==========================================
+   CUSTOM CURSOR STYLING
+   ========================================== */
+
+.cursorDot {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10001;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.cursorRing {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent);
+  transform: translate(-50%, -50%);
+  transition: width 0.25s, height 0.25s, background-color 0.25s, border-color 0.2s, transform 0.15s ease, opacity 0.2s ease;
+}
+
+.cursorDotHovered {
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.cursorRingHovered {
+  width: 56px;
+  height: 56px;
+  border-color: var(--color-accent-hover);
+  background-color: var(--color-accent-glow);
+}
+
+.cursorDotClicked {
+  transform: translate(-50%, -50%) scale(1.4);
+}
+
+.cursorRingClicked {
+  width: 28px;
+  height: 28px;
+  border-color: var(--color-accent-hover);
+}
+
+/* Hide default cursor on desktop device pointer views */
+@media (pointer: fine) {
+  :global(html), 
+  :global(body), 
+  :global(a), 
+  :global(button), 
+  :global(input), 
+  :global(select), 
+  :global(textarea), 
+  :global([role="button"]), 
+  :global([class*="theme-toggle"]), 
+  :global([class*="ai-chat"]) {
+    cursor: none !important;
   }
 }

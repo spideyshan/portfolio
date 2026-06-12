@@ -4,6 +4,8 @@ import ContactForm from '@/components/ContactForm';
 import ThemeToggle from '@/components/ThemeToggle';
 import AIChat from '@/components/AIChat';
 import ScrollEffects from '@/components/ScrollEffects';
+import CustomCursor from '@/components/CustomCursor';
+import InteractiveBackground from '@/components/InteractiveBackground';
 import styles from './page.module.css';
 
 export const revalidate = 60; // Revalidate cache every 60 seconds
@@ -38,6 +40,8 @@ export default async function Home() {
   return (
     <>
       <ScrollEffects />
+      <CustomCursor />
+      <InteractiveBackground />
       {/* Navigation Header */}
       <header className={styles.header}>
         <nav className={styles.nav}>
