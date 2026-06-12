@@ -47,6 +47,32 @@ export default function ScrollEffects() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    // 3. Fallback Scroll Reveal Observer for browsers without native scroll-driven animations (e.g. Firefox)
+    if (typeof window !== 'undefined' && !window.CSS?.supports('(animation-timeline: view()) and (animation-range: entry)')) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add(styles.sectionVisible);
+            }
+          });
+        },
+        {
+          rootMargin: '-50px 0px',
+          threshold: 0.1
+        }
+      );
+
+      document.querySelectorAll(`.${styles.section}`).forEach((el) => {
+        observer.observe(el);
+      });
+
+      return () => observer.disconnect();
+    }
+  }, []);
+
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
