@@ -117,6 +117,13 @@
   margin-block-end: var(--space-6);
 }
 
+.heroRole {
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-block-end: var(--space-4);
+}
+
 .heroBio {
   font-size: var(--fs-lg);
   color: var(--color-muted);
@@ -521,12 +528,23 @@
 }
 
 .cardTag {
-  padding: 2px 8px;
+  padding: 4px 10px;
   background-color: var(--border-divider);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-full);
   font-size: var(--fs-xs);
   color: var(--color-muted);
-  font-weight: 500;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-family: var(--font-mono);
+  cursor: default;
+}
+
+.cardTag:hover {
+  background-color: var(--color-accent-glow);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: translateY(-1px) scale(1.03);
 }
 
 .projectLinks {
@@ -1261,6 +1279,155 @@
   padding-block: var(--space-8);
   color: var(--color-muted);
   font-size: var(--fs-sm);
+}
+
+/* ==========================================
+   SCROLL PROGRESS BAR
+   ========================================== */
+
+.scrollProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: var(--gradient-hero);
+  z-index: 10000;
+  transition: width 0.1s ease-out;
+}
+
+/* ==========================================
+   PAGE PRELOADER
+   ========================================== */
+
+.pagePreloader {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-app);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11000;
+  backdrop-filter: blur(12px);
+  animation: preloaderFadeOut 0.4s ease 1.2s forwards;
+  pointer-events: none;
+}
+
+.preloaderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  pointer-events: auto;
+}
+
+.preloaderSpinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-card);
+  border-top-color: var(--color-accent);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+}
+
+.preloaderText {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: pulse 1.5s ease infinite;
+}
+
+/* ==========================================
+   BACK TO TOP BUTTON
+   ========================================== */
+
+.backToTopBtn {
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  color: var(--fg-app);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 999;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow-sm);
+}
+
+.backToTopBtn:hover {
+  transform: translateY(0) scale(1.08);
+  background-color: var(--color-accent);
+  color: #ffffff;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 15px var(--color-accent-glow);
+}
+
+.backToTopVisible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* ==========================================
+   GITHUB STATS BADGE IN PROJECT CARD
+   ========================================== */
+
+.projectLinkStat {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  background-color: var(--border-divider);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-inline-start: var(--space-2);
+  border: 1px solid var(--border-card);
+  transition: all 0.2s ease;
+}
+
+.projectLink:hover .projectLinkStat {
+  background-color: var(--color-accent-glow);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* ==========================================
+   KEYFRAME ANIMATIONS
+   ========================================== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes preloaderFadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 /* ==========================================

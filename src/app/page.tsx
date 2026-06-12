@@ -3,6 +3,7 @@ import ProjectGrid from '@/components/ProjectGrid';
 import ContactForm from '@/components/ContactForm';
 import ThemeToggle from '@/components/ThemeToggle';
 import AIChat from '@/components/AIChat';
+import ScrollEffects from '@/components/ScrollEffects';
 import styles from './page.module.css';
 
 export const revalidate = 60; // Revalidate cache every 60 seconds
@@ -36,6 +37,7 @@ export default async function Home() {
 
   return (
     <>
+      <ScrollEffects />
       {/* Navigation Header */}
       <header className={styles.header}>
         <nav className={styles.nav}>
@@ -100,25 +102,26 @@ export default async function Home() {
             <h1 className={styles.heroTitle}>
               <span className="text-gradient">{profile.name}</span>
             </h1>
-            <p className={styles.heroBio}>{profile.role}</p>
+            <p className={styles.heroRole}>{profile.role || 'Computer Science Student | Python Developer'}</p>
+            <p className={styles.heroBio}>
+              Building secure, scalable, and modern full-stack web applications with Next.js, Python, and Supabase.
+            </p>
             <div className={styles.heroButtons}>
-              <a href="#contact" className={`${styles.btn} ${styles.btnPrimary}`}>
-                Get In Touch
-              </a>
-              {profile.resume_url && profile.resume_url !== '#' ? (
+              {profile.resume_url && profile.resume_url !== '#' && (
                 <a 
                   href={profile.resume_url} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className={`${styles.btn} ${styles.btnSecondary}`}
+                  className={`${styles.btn} ${styles.btnPrimary}`}
+                  style={{ gap: '0.5rem' }}
                 >
-                  Download Resume
-                </a>
-              ) : (
-                <a href="#projects" className={`${styles.btn} ${styles.btnSecondary}`}>
-                  View Projects
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  View Resume
                 </a>
               )}
+              <a href="#contact" className={`${styles.btn} ${styles.btnSecondary}`}>
+                Contact Me
+              </a>
             </div>
           </div>
           
