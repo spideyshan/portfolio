@@ -14,6 +14,11 @@
     --accent-hover: #34d399;
     --accent-secondary: #06b6d4;
 
+    /* Custom Cursor Colors (Dark Mode) */
+    --cursor-inner: #34d399;
+    --cursor-outer: #10b981;
+    --cursor-glow: rgba(16, 185, 129, 0.25);
+
     /* Base Palette (Professional Dark Theme) */
     --clr-bg: var(--bg);
     --clr-fg: var(--text);
@@ -102,6 +107,11 @@
     --accent: #059669;
     --accent-hover: #10b981;
     --accent-secondary: #0891b2;
+
+    /* Custom Cursor Colors (Light Mode) */
+    --cursor-inner: #059669;
+    --cursor-outer: #0891b2;
+    --cursor-glow: rgba(5, 150, 105, 0.18);
 
     /* Base Palette (Clean Light Theme) */
     --clr-bg: var(--bg);

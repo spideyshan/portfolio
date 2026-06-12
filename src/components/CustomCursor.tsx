@@ -7,7 +7,7 @@ export default function CustomCursor() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [trail, setTrail] = useState({ x: 0, y: 0 });
   const [isHidden, setIsHidden] = useState(true);
-  const [isHovered, setIsHovered] = useState(false);
+  const [hoverType, setHoverType] = useState<'button' | 'link' | 'card' | null>(null);
   const [isClicked, setIsClicked] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
 
@@ -41,22 +41,33 @@ export default function CustomCursor() {
     const onMouseLeave = () => setIsHidden(true);
     const onMouseEnter = () => setIsHidden(false);
 
-    // Detect if mouse is over an interactive element
+    // Detect if mouse is over an interactive element or a specific card container
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target) return;
       
-      const isInteractive = 
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'INPUT' ||
-        target.tagName === 'SELECT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.closest('a') !== null ||
-        target.closest('button') !== null ||
-        target.closest('[role="button"]') !== null;
-        
-      setIsHovered(!!isInteractive);
+      const isCard = target.closest(`.${styles.projectCard}`) !== null ||
+                     target.closest(`.${styles.achievementCard}`) !== null ||
+                     target.closest(`.${styles.certificationCard}`) !== null ||
+                     target.closest(`.${styles.educationCard}`) !== null ||
+                     target.closest(`.${styles.statCard}`) !== null;
+      
+      const isButton = target.tagName === 'BUTTON' ||
+                       target.closest('button') !== null ||
+                       target.closest('[role="button"]') !== null ||
+                       (target.tagName === 'INPUT' && (target as HTMLInputElement).type === 'submit');
+
+      const isLink = target.tagName === 'A' || target.closest('a') !== null;
+      
+      if (isButton) {
+        setHoverType('button');
+      } else if (isLink) {
+        setHoverType('link');
+      } else if (isCard) {
+        setHoverType('card');
+      } else {
+        setHoverType(null);
+      }
     };
 
     window.addEventListener('mousemove', onMouseMove);
@@ -66,12 +77,11 @@ export default function CustomCursor() {
     document.addEventListener('mouseenter', onMouseEnter);
     window.addEventListener('mouseover', onMouseOver);
 
-    // Smooth lerp loop for the trailing outer ring
+    // Smooth spring/lag animation loop (lerp factor: 0.15 gives a ~0.1s delay)
     const animateTrail = () => {
       const dx = mouseRef.current.x - trailRef.current.x;
       const dy = mouseRef.current.y - trailRef.current.y;
       
-      // Lerp factor of 0.15 gives a smooth lagging/spring effect
       trailRef.current.x += dx * 0.15;
       trailRef.current.y += dy * 0.15;
       
@@ -97,17 +107,17 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* 1. Central Cursor Dot */}
+      {/* 1. Inner Glowing Ring */}
       <div
-        className={`${styles.cursorDot} ${isHovered ? styles.cursorDotHovered : ''} ${isClicked ? styles.cursorDotClicked : ''}`}
+        className={`${styles.cursorInner} ${hoverType ? styles[`cursorInnerHovered_${hoverType}`] : ''} ${isClicked ? styles.cursorInnerClicked : ''}`}
         style={{
           left: `${position.x}px`,
           top: `${position.y}px`
         }}
       />
-      {/* 2. Lagging Outer Ring */}
+      {/* 2. Lagging Outer Glowing Ring */}
       <div
-        className={`${styles.cursorRing} ${isHovered ? styles.cursorRingHovered : ''} ${isClicked ? styles.cursorRingClicked : ''}`}
+        className={`${styles.cursorOuter} ${hoverType ? styles[`cursorOuterHovered_${hoverType}`] : ''} ${isClicked ? styles.cursorOuterClicked : ''}`}
         style={{
           left: `${trail.x}px`,
           top: `${trail.y}px`

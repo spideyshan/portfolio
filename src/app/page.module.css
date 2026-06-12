@@ -1598,49 +1598,78 @@
    CUSTOM CURSOR STYLING
    ========================================== */
 
-.cursorDot {
+.cursorInner {
   position: fixed;
   pointer-events: none;
   z-index: 10001;
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background-color: var(--color-accent);
+  border: 1.5px solid var(--cursor-inner);
   transform: translate(-50%, -50%);
-  transition: transform 0.15s ease, background-color 0.2s ease, opacity 0.2s ease;
+  transition: width 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+              height 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+              border-color 0.2s ease;
 }
 
-.cursorRing {
+.cursorOuter {
   position: fixed;
   pointer-events: none;
   z-index: 10000;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 2px solid var(--color-accent);
+  border: 1.5px solid var(--cursor-outer);
   transform: translate(-50%, -50%);
-  transition: width 0.25s, height 0.25s, background-color 0.25s, border-color 0.2s, transform 0.15s ease, opacity 0.2s ease;
+  box-shadow: 0 0 12px var(--cursor-glow);
+  transition: width 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+              height 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
 }
 
-.cursorDotHovered {
-  transform: translate(-50%, -50%) scale(0);
-}
-
-.cursorRingHovered {
-  width: 56px;
-  height: 56px;
+/* Hover over Buttons: Scale to 1.5x */
+.cursorInnerHovered_button {
+  width: 18px;
+  height: 18px;
   border-color: var(--color-accent-hover);
-  background-color: var(--color-accent-glow);
 }
-
-.cursorDotClicked {
-  transform: translate(-50%, -50%) scale(1.4);
-}
-
-.cursorRingClicked {
-  width: 28px;
-  height: 28px;
+.cursorOuterHovered_button {
+  width: 48px;
+  height: 48px;
   border-color: var(--color-accent-hover);
+  box-shadow: 0 0 16px var(--cursor-glow);
+}
+
+/* Hover over Links: Enlarge and increase glow */
+.cursorInnerHovered_link {
+  width: 16px;
+  height: 16px;
+  border-color: var(--color-accent-hover);
+}
+.cursorOuterHovered_link {
+  width: 42px;
+  height: 42px;
+  border-color: var(--color-accent-hover);
+  box-shadow: 0 0 18px var(--cursor-glow);
+}
+
+/* Hover over Cards: Outer ring expands subtly */
+.cursorOuterHovered_card {
+  width: 38px;
+  height: 38px;
+  box-shadow: 0 0 14px var(--cursor-glow);
+}
+
+/* Clicked States: Glow pulse */
+.cursorInnerClicked {
+  width: 6px;
+  height: 6px;
+}
+.cursorOuterClicked {
+  width: 44px;
+  height: 44px;
+  box-shadow: 0 0 24px var(--cursor-glow);
 }
 
 /* Hide default cursor on desktop device pointer views */
