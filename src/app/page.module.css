@@ -1602,8 +1602,8 @@
   position: fixed;
   pointer-events: none;
   z-index: 10001;
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: var(--cursor-inner);
   transform: translate(-50%, -50%);
@@ -1614,8 +1614,8 @@
   position: fixed;
   pointer-events: none;
   z-index: 10000;
-  width: 44px;
-  height: 44px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--cursor-outer) 0%, transparent 70%);
   filter: blur(8px);
@@ -1629,43 +1629,43 @@
 
 /* Hover over Buttons: Aura expands and brightens */
 .cursorInnerHovered_button {
-  width: 6px;
-  height: 6px;
+  width: 9px;
+  height: 9px;
   background-color: var(--color-accent-hover);
 }
 .cursorOuterHovered_button {
-  width: 72px;
-  height: 72px;
+  width: 96px;
+  height: 96px;
   opacity: 0.65;
 }
 
 /* Hover over Links: Aura expands and brightens */
 .cursorInnerHovered_link {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   background-color: var(--color-accent-hover);
 }
 .cursorOuterHovered_link {
-  width: 64px;
-  height: 64px;
+  width: 84px;
+  height: 84px;
   opacity: 0.6;
 }
 
 /* Hover over Cards: Aura expands subtly */
 .cursorOuterHovered_card {
-  width: 54px;
-  height: 54px;
+  width: 72px;
+  height: 72px;
   opacity: 0.55;
 }
 
 /* Clicked States: Aura implodes and flashes */
 .cursorInnerClicked {
-  width: 2px;
-  height: 2px;
+  width: 3px;
+  height: 3px;
 }
 .cursorOuterClicked {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   opacity: 0.8;
 }
 
