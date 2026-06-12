@@ -1614,8 +1614,8 @@
   position: fixed;
   pointer-events: none;
   z-index: 10000;
-  width: 80px;
-  height: 80px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--cursor-outer) 0%, transparent 70%);
   filter: blur(8px);
@@ -1634,8 +1634,8 @@
   background-color: var(--color-accent-hover);
 }
 .cursorOuterHovered_button {
-  width: 120px;
-  height: 120px;
+  width: 72px;
+  height: 72px;
   opacity: 0.65;
 }
 
@@ -1646,15 +1646,15 @@
   background-color: var(--color-accent-hover);
 }
 .cursorOuterHovered_link {
-  width: 100px;
-  height: 100px;
+  width: 64px;
+  height: 64px;
   opacity: 0.6;
 }
 
 /* Hover over Cards: Aura expands subtly */
 .cursorOuterHovered_card {
-  width: 90px;
-  height: 90px;
+  width: 54px;
+  height: 54px;
   opacity: 0.55;
 }
 
@@ -1664,8 +1664,8 @@
   height: 2px;
 }
 .cursorOuterClicked {
-  width: 60px;
-  height: 60px;
+  width: 36px;
+  height: 36px;
   opacity: 0.8;
 }
 
