@@ -3,17 +3,28 @@
     /* Enforce Dark Theme Only */
     color-scheme: dark;
 
+    /* Primary CSS Variables requested by user */
+    --bg: #0f172a;
+    --bg-secondary: #111827;
+    --card: rgba(15, 23, 42, 0.72);
+    --text: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --accent: #10b981;
+    --accent-hover: #34d399;
+    --accent-secondary: #06b6d4;
+
     /* Base Palette (Professional Dark Theme) */
-    --clr-bg: #0b0f19;          /* Deep Slate / Midnight Blue */
-    --clr-fg: #f8fafc;          /* Off-white / Slate Silver */
-    --clr-card-bg: rgba(17, 24, 39, 0.85); /* Slightly less transparent glassmorphic Charcoal */
-    --clr-chat-bg: rgba(11, 15, 25, 0.95);  /* Solid midnight background for floating AI Chat */
-    --clr-card-border: rgba(255, 255, 255, 0.07); /* Very subtle card border */
+    --clr-bg: var(--bg);
+    --clr-fg: var(--text);
+    --clr-card-bg: var(--card);
+    --clr-chat-bg: rgba(15, 23, 42, 0.95);
+    --clr-card-border: rgba(255, 255, 255, 0.08); /* Glass Border */
     
-    --clr-muted: #94a3b8;       /* Slate Muted */
-    --clr-accent: #10b981;      /* Premium Emerald Green */
-    --clr-accent-hover: #34d399; /* Vibrant Mint */
-    --clr-accent-glow: rgba(16, 185, 129, 0.15); /* Subtle Emerald Glow */
+    --clr-muted: var(--text-muted);
+    --clr-accent: var(--accent);
+    --clr-accent-hover: var(--accent-hover);
+    --clr-accent-glow: rgba(16, 185, 129, 0.15); /* Shadows / Accent Glow */
     --clr-border: #1e293b;      /* Slate border */
     
     /* Semantic Mapped Variables */
@@ -29,7 +40,7 @@
     --border-divider: var(--clr-border);
     
     /* Decorative Colors (Emerald to Cyan professional gradients) */
-    --gradient-hero: linear-gradient(135deg in oklab, #10b981, #06b6d4);
+    --gradient-hero: linear-gradient(135deg in oklab, var(--accent), var(--accent-secondary));
     --gradient-hero-dark: linear-gradient(135deg in oklab, #059669, #0891b2);
     
     --bg-gradient-mesh: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
@@ -81,17 +92,28 @@
   [data-theme="light"] {
     color-scheme: light;
     
+    /* Primary CSS Variables requested by user */
+    --bg: #f8fafc;
+    --bg-secondary: #ffffff;
+    --card: rgba(255, 255, 255, 0.75);
+    --text: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --accent: #059669;
+    --accent-hover: #10b981;
+    --accent-secondary: #0891b2;
+
     /* Base Palette (Clean Light Theme) */
-    --clr-bg: #f8fafc;          /* Soft light slate */
-    --clr-fg: #0f172a;          /* Deep Slate / Midnight Blue */
-    --clr-card-bg: rgba(255, 255, 255, 0.85); /* Less transparent glassmorphic white */
-    --clr-chat-bg: rgba(248, 250, 252, 0.96); /* Solid light background for floating AI Chat */
-    --clr-card-border: rgba(15, 23, 42, 0.08); /* Very subtle dark card border */
+    --clr-bg: var(--bg);
+    --clr-fg: var(--text);
+    --clr-card-bg: var(--card);
+    --clr-chat-bg: rgba(255, 255, 255, 0.96); 
+    --clr-card-border: rgba(15, 23, 42, 0.08); /* Glass Border */
     
-    --clr-muted: #64748b;       /* Slate Muted */
-    --clr-accent: #059669;      /* Darker Emerald for readability */
-    --clr-accent-hover: #10b981; /* Vibrant Emerald */
-    --clr-accent-glow: rgba(5, 150, 105, 0.08); /* Emerald Glow */
+    --clr-muted: var(--text-muted);
+    --clr-accent: var(--accent);
+    --clr-accent-hover: var(--accent-hover);
+    --clr-accent-glow: rgba(5, 150, 105, 0.12); /* Shadows */
     --clr-border: #e2e8f0;      /* Slate Light Border */
     
     --bg-gradient-mesh: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
