@@ -22,7 +22,7 @@ export default function ScrollEffects() {
 
     const loadingTimeout = setTimeout(() => {
       setLoading(false);
-    }, 2200);
+    }, 2650);
 
     return () => {
       clearTimeout(logoTimeout);
@@ -94,7 +94,7 @@ export default function ScrollEffects() {
         aria-hidden="true"
       />
 
-      {/* Page Preloader / Geometric Shutter Splash Screen */}
+      {/* Page Preloader / Glassmorphic Fade Splash Screen */}
       {loading && (
         <div className={`${styles.pagePreloader} ${exiting ? styles.pagePreloaderExiting : ''}`}>
           {/* Shockwave Ripple */}
@@ -107,14 +107,6 @@ export default function ScrollEffects() {
               <div className={styles.preloaderLogoRingOuter}></div>
               <div className={styles.preloaderLogoRingInner}></div>
             </div>
-          </div>
-          
-          {/* Shutter Panels */}
-          <div className={styles.preloaderPanels}>
-            <div className={`${styles.preloaderPanel} ${styles.panel1} ${exiting ? styles.panelExiting : ''}`}></div>
-            <div className={`${styles.preloaderPanel} ${styles.panel2} ${exiting ? styles.panelExiting : ''}`}></div>
-            <div className={`${styles.preloaderPanel} ${styles.panel3} ${exiting ? styles.panelExiting : ''}`}></div>
-            <div className={`${styles.preloaderPanel} ${styles.panel4} ${exiting ? styles.panelExiting : ''}`}></div>
           </div>
         </div>
       )}
