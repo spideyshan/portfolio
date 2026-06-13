@@ -1371,93 +1371,118 @@
 .pagePreloader {
   position: fixed;
   inset: 0;
-  background-color: var(--bg-app);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+  z-index: 11000;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 11000;
-  transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1);
   overflow: hidden;
-}
-
-.pagePreloader::before {
-  content: '';
-  position: absolute;
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
-  filter: blur(40px);
-  animation: pulseAura 4s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
-.pagePreloaderExiting {
-  transform: translateY(-100%);
-}
-
-.preloaderContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  padding: var(--space-8);
+.preloaderPanels {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  z-index: 1;
   pointer-events: auto;
-  z-index: 2;
 }
 
-.preloaderWordContainer {
-  height: 90px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-6);
-}
-
-.preloaderWord {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: clamp(3rem, 7vw, 4.5rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  text-align: center;
-  opacity: 0;
-  transform: translateY(80px);
-  animation: preloaderWordSlideIn 0.22s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-}
-
-.preloaderBarContainer {
-  width: 240px;
-  height: 3px;
-  background-color: rgba(255, 255, 255, 0.07);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  position: relative;
-  margin-bottom: var(--space-4);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.preloaderBar {
+.preloaderPanel {
+  background-color: var(--bg-app);
+  background-image: 
+    radial-gradient(at var(--panel-x, 50%) var(--panel-y, 50%), rgba(16, 185, 129, 0.05) 0px, transparent 60%);
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-  box-shadow: 0 0 8px var(--color-accent-glow);
-  transition: width 0.1s cubic-bezier(0.1, 0.8, 0.2, 1);
+  width: 100%;
+  transform: translateY(0);
+  transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-.preloaderPercentage {
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--text-secondary);
-  letter-spacing: 0.15em;
-  opacity: 0.8;
+.panel1 {
+  --panel-x: 0%;
+  --panel-y: 0%;
+}
+.panel2 {
+  --panel-x: 33%;
+  --panel-y: 100%;
+}
+.panel3 {
+  --panel-x: 66%;
+  --panel-y: 0%;
+}
+.panel4 {
+  --panel-x: 100%;
+  --panel-y: 100%;
+}
+
+.panel1.panelExiting {
+  transform: translateY(-100%);
+  transition-delay: 0s;
+}
+.panel2.panelExiting {
+  transform: translateY(100%);
+  transition-delay: 0.1s;
+}
+.panel3.panelExiting {
+  transform: translateY(-100%);
+  transition-delay: 0.2s;
+}
+.panel4.panelExiting {
+  transform: translateY(100%);
+  transition-delay: 0.3s;
+}
+
+.preloaderLogoContainer {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1), transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.preloaderLogoFadeOut {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.preloaderLogoCircle {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 0 15px rgba(255, 255, 255, 0.02),
+    0 0 30px rgba(16, 185, 129, 0.1);
+  animation: preloaderLogoPulse 2s ease-in-out infinite alternate;
+}
+
+.preloaderLogoText {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text);
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.05em;
+}
+
+.preloaderLogoRing {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px dashed var(--accent);
+  opacity: 0.4;
+  animation: preloaderLogoRingSpin 10s linear infinite;
 }
 
 /* ==========================================
@@ -1545,25 +1570,27 @@
   }
 }
 
-@keyframes preloaderWordSlideIn {
+@keyframes preloaderLogoRingSpin {
   0% {
-    transform: translateY(80px);
-    opacity: 0;
+    transform: rotate(0deg);
   }
   100% {
-    transform: translateY(0);
-    opacity: 1;
+    transform: rotate(360deg);
   }
 }
 
-@keyframes pulseAura {
+@keyframes preloaderLogoPulse {
   0% {
-    transform: scale(0.9) translate(-10px, -10px);
-    opacity: 0.5;
+    transform: scale(0.96);
+    box-shadow: 
+      0 8px 32px 0 rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(16, 185, 129, 0.1);
   }
   100% {
-    transform: scale(1.1) translate(10px, 10px);
-    opacity: 0.8;
+    transform: scale(1.04);
+    box-shadow: 
+      0 8px 32px 0 rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(16, 185, 129, 0.25);
   }
 }
 

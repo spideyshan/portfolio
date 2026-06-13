@@ -6,61 +6,30 @@ import styles from '@/app/page.module.css';
 export default function ScrollEffects() {
   const [loading, setLoading] = useState(true);
   const [exiting, setExiting] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [wordIndex, setWordIndex] = useState(0);
+  const [logoVisible, setLogoVisible] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
-  const words = ['Hello', 'Bonjour', 'Hola', 'Ciao', 'Namaste', 'Vanakkam', 'Welcome'];
-
   useEffect(() => {
-    // 1. Progress simulation loop
-    let interval: NodeJS.Timeout;
-    let progressValue = 0;
-    
-    const step = () => {
-      if (progressValue >= 100) {
-        progressValue = 100;
-        setProgress(100);
-        setWordIndex(words.length - 1);
-        
-        // Delay slightly for 'Welcome', then slide curtain up
-        setTimeout(() => {
-          setExiting(true);
-          // Unmount after curtain transition completes (800ms)
-          setTimeout(() => {
-            setLoading(false);
-          }, 800);
-        }, 300);
-        
-        clearInterval(interval);
-      } else {
-        // Increment progress non-linearly
-        const diff = Math.random() * 8 + 3;
-        progressValue = Math.min(progressValue + diff, 100);
-        setProgress(progressValue);
-      }
+    // 1. Shutter preloader timeline
+    const logoTimeout = setTimeout(() => {
+      setLogoVisible(false);
+    }, 1200);
+
+    const exitingTimeout = setTimeout(() => {
+      setExiting(true);
+    }, 1400);
+
+    const loadingTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 2200);
+
+    return () => {
+      clearTimeout(logoTimeout);
+      clearTimeout(exitingTimeout);
+      clearTimeout(loadingTimeout);
     };
-    
-    interval = setInterval(step, 80);
-    return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    // 2. Word cycling loop
-    if (progress === 100) return;
-    
-    const cycleInterval = setInterval(() => {
-      setWordIndex((prev) => {
-        if (prev < words.length - 1) {
-          return prev + 1;
-        }
-        return prev;
-      });
-    }, 200);
-    
-    return () => clearInterval(cycleInterval);
-  }, [progress]);
 
   useEffect(() => {
     // 2. Scroll and Back to Top controllers
@@ -125,21 +94,23 @@ export default function ScrollEffects() {
         aria-hidden="true"
       />
 
-      {/* Page Preloader / Curtain Splash Screen */}
+      {/* Page Preloader / Geometric Shutter Splash Screen */}
       {loading && (
         <div className={`${styles.pagePreloader} ${exiting ? styles.pagePreloaderExiting : ''}`}>
-          <div className={styles.preloaderContent}>
-            <div className={styles.preloaderWordContainer}>
-              <span key={words[wordIndex]} className={styles.preloaderWord}>
-                {words[wordIndex]}
-              </span>
+          {/* Central Glassmorphic Logo */}
+          <div className={`${styles.preloaderLogoContainer} ${!logoVisible ? styles.preloaderLogoFadeOut : ''}`}>
+            <div className={styles.preloaderLogoCircle}>
+              <span className={styles.preloaderLogoText}>P</span>
+              <div className={styles.preloaderLogoRing}></div>
             </div>
-            <div className={styles.preloaderBarContainer}>
-              <div className={styles.preloaderBar} style={{ width: `${progress}%` }} />
-            </div>
-            <span className={styles.preloaderPercentage}>
-              {String(Math.round(progress)).padStart(3, '0')}%
-            </span>
+          </div>
+          
+          {/* Shutter Panels */}
+          <div className={styles.preloaderPanels}>
+            <div className={`${styles.preloaderPanel} ${styles.panel1} ${exiting ? styles.panelExiting : ''}`}></div>
+            <div className={`${styles.preloaderPanel} ${styles.panel2} ${exiting ? styles.panelExiting : ''}`}></div>
+            <div className={`${styles.preloaderPanel} ${styles.panel3} ${exiting ? styles.panelExiting : ''}`}></div>
+            <div className={`${styles.preloaderPanel} ${styles.panel4} ${exiting ? styles.panelExiting : ''}`}></div>
           </div>
         </div>
       )}
