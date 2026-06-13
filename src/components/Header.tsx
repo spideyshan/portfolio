@@ -11,14 +11,46 @@ interface HeaderProps {
 export default function Header({ resumeUrl }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
+    let lastScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
+    let ticking = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+
+          // 1. Mark scrolled state for backdrop filter / background color changes
+          if (currentScrollY <= 20) {
+            setScrolled(false);
+            setVisible(true);
+          } else {
+            setScrolled(true);
+
+            // 2. Determine visibility based on scroll direction & mobile menu state
+            if (isOpen) {
+              setVisible(true);
+            } else if (currentScrollY > lastScrollY) {
+              // Scrolling down -> hide header
+              setVisible(false);
+            } else if (currentScrollY < lastScrollY) {
+              // Scrolling up -> show header
+              setVisible(true);
+            }
+          }
+
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isOpen]);
 
   // Close the mobile menu drawer
   const closeMenu = () => setIsOpen(false);
@@ -39,7 +71,7 @@ export default function Header({ resumeUrl }: HeaderProps) {
   }, [isOpen]);
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''}`}>
+    <header className={`${styles.header} ${scrolled ? styles.headerScrolled : ''} ${!visible ? styles.headerHidden : ''}`}>
       <nav className={styles.nav}>
         <div className={styles.logo}>
           <span>Portfolio</span>
