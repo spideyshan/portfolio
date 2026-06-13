@@ -1,7 +1,7 @@
 import { getProfile, getProjects, getSkills, getEducation, getAchievements, getCertifications } from '@/lib/supabase';
 import ProjectGrid from '@/components/ProjectGrid';
 import ContactForm from '@/components/ContactForm';
-import ThemeToggle from '@/components/ThemeToggle';
+import Header from '@/components/Header';
 import AIChat from '@/components/AIChat';
 import ScrollEffects from '@/components/ScrollEffects';
 import CustomCursor from '@/components/CustomCursor';
@@ -52,59 +52,7 @@ export default async function Home() {
       <CustomCursor />
       <InteractiveBackground />
       {/* Navigation Header */}
-      <header className={styles.header}>
-        <nav className={styles.nav}>
-          <div className={styles.logo}>
-            <span>Portfolio</span>
-            <span className={styles.logoDot} />
-          </div>
-          <ul className={styles.navLinks}>
-            <li>
-              <a href="#about" className={styles.navLink}>
-                About
-              </a>
-            </li>
-            <li>
-              <a href="#skills" className={styles.navLink}>
-                Tech Stack
-              </a>
-            </li>
-            <li>
-              <a href="#projects" className={styles.navLink}>
-                Projects
-              </a>
-            </li>
-            <li>
-              <a href="#education" className={styles.navLink}>
-                Education
-              </a>
-            </li>
-            <li>
-              <a href="#achievements" className={styles.navLink}>
-                Achievements
-              </a>
-            </li>
-            <li>
-              <a href="#certifications" className={styles.navLink}>
-                Certifications
-              </a>
-            </li>
-            {profile.resume_url && profile.resume_url !== '#' && (
-              <li>
-                <a href="#resume" className={styles.navLink}>
-                  Resume
-                </a>
-              </li>
-            )}
-            <li>
-              <a href="#contact" className={styles.navLink}>
-                Contact
-              </a>
-            </li>
-          </ul>
-          <ThemeToggle />
-        </nav>
-      </header>
+      <Header resumeUrl={profile.resume_url} />
 
       <div className={styles.container}>
         <main className={styles.main}>

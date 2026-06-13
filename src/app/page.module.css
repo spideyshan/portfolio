@@ -26,10 +26,17 @@
   top: 0;
   z-index: 100;
   width: 100%;
-  background-color: var(--bg-card);
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-card);
-  transition: background-color 0.3s ease;
+  -webkit-backdrop-filter: blur(16px);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.headerScrolled {
+  background-color: var(--bg-card);
+  border-bottom-color: var(--border-card);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav {
@@ -93,6 +100,92 @@
 .navLink:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+}
+
+.hamburgerLine {
+  width: 100%;
+  height: 2px;
+  background-color: var(--fg-app);
+  border-radius: var(--radius-sm);
+  transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.hamburgerActive .hamburgerLine:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.hamburgerActive .hamburgerLine:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburgerActive .hamburgerLine:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.mobileMenu {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 70px);
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 99;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mobileMenuActive {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.mobileMenuLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: var(--space-6);
+  list-style: none;
+}
+
+.mobileMenuLink {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--fg-app);
+  transition: color 0.2s ease;
+}
+
+.mobileMenuLink:hover {
+  color: var(--color-accent);
 }
 
 /* ==========================================
@@ -1684,39 +1777,59 @@
    ========================================== */
 
 @media (max-width: 767px) {
-  .hero {
-    text-align: center;
-    padding-block-start: var(--space-12);
+  .navLinks {
+    display: none;
   }
+  
+  .hamburger {
+    display: flex;
+  }
+  
+  .mobileMenu {
+    display: flex;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-block-start: var(--space-8);
+    padding-block-end: var(--space-8);
+    gap: var(--space-6);
+    text-align: center;
+  }
+  
   .heroContent {
     align-items: center;
   }
+  
   .heroBio {
     margin-inline: auto;
   }
+  
   .heroButtons {
     justify-content: center;
+  }
+  
+  .heroArt {
+    width: 240px;
+    height: 240px;
+    max-width: 100%;
+  }
+
+  .aboutProfile {
+    padding: var(--space-5);
+  }
+  
+  .contactForm {
+    padding: var(--space-5);
+  }
+  
+  .resumeContainer {
+    padding: var(--space-5);
   }
 }
 
 @media (max-width: 640px) {
-  .nav {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    height: auto;
-    padding-block: var(--space-4);
-    row-gap: var(--space-4);
-  }
-  
-  .navLinks {
-    grid-column: span 2;
-    display: flex;
-    justify-content: center;
-    column-gap: var(--space-6);
-    padding: 0;
-  }
-  
   .container {
     padding-inline: var(--space-4);
   }
@@ -1727,6 +1840,24 @@
   
   .heroTitle {
     font-size: 2.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .aboutProfile {
+    padding: var(--space-4);
+  }
+  
+  .contactForm {
+    padding: var(--space-4);
+  }
+  
+  .resumeContainer {
+    padding: var(--space-4);
   }
 }
 
