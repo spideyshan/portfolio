@@ -7,6 +7,7 @@
   max-width: var(--container-max-width);
   margin-inline: auto;
   padding-inline: var(--space-6);
+  padding-top: 70px;
 }
 
 .main {
@@ -22,8 +23,9 @@
    ========================================== */
 
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
   z-index: 100;
   width: 100%;
   background-color: transparent;
@@ -1604,7 +1606,7 @@
 .backToTopBtn {
   position: fixed;
   bottom: var(--space-8);
-  right: var(--space-8);
+  left: var(--space-8);
   width: 46px;
   height: 46px;
   border-radius: var(--radius-full);
