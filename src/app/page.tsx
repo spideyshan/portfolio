@@ -102,7 +102,7 @@ export default async function Home() {
         {/* Hero Section */}
         <section className={styles.hero}>
           <div className={styles.heroContent}>
-            <span className={styles.heroSubtitle}>Hello World, I&apos;m</span>
+            <span className={styles.heroSubtitle}>Hello, I&apos;m</span>
             <h1 className={styles.heroTitle}>
               <span className="text-gradient">{profile.name}</span>
             </h1>
