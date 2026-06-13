@@ -9,6 +9,7 @@ export default function ScrollEffects() {
   const [logoVisible, setLogoVisible] = useState(true);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isScrollTimelineSupported, setIsScrollTimelineSupported] = useState(false);
 
   useEffect(() => {
     // 1. Shutter preloader timeline
@@ -24,6 +25,11 @@ export default function ScrollEffects() {
       setLoading(false);
     }, 2650);
 
+    // Check if scroll timeline is supported natively in CSS
+    if (typeof window !== 'undefined' && window.CSS?.supports?.('animation-timeline', 'scroll()')) {
+      setIsScrollTimelineSupported(true);
+    }
+
     return () => {
       clearTimeout(logoTimeout);
       clearTimeout(exitingTimeout);
@@ -32,25 +38,29 @@ export default function ScrollEffects() {
   }, []);
 
   useEffect(() => {
-    // 2. Scroll and Back to Top controllers
-    const handleScroll = () => {
-      // Calculate scroll progress percentage
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        setScrollProgress((window.scrollY / totalHeight) * 100);
-      }
+    // 2. Scroll and Back to Top controllers with requestAnimationFrame throttle
+    let ticking = false;
 
-      // Toggle Back to Top button visibility
-      if (window.scrollY > 400) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowBackToTop(window.scrollY > 400);
+
+          if (!isScrollTimelineSupported) {
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (totalHeight > 0) {
+              setScrollProgress((window.scrollY / totalHeight) * 100);
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isScrollTimelineSupported]);
 
   useEffect(() => {
     // 3. Fallback Scroll Reveal Observer for browsers without native scroll-driven animations (e.g. Firefox)
@@ -90,7 +100,7 @@ export default function ScrollEffects() {
       {/* Scroll Progress Bar */}
       <div 
         className={styles.scrollProgress} 
-        style={{ width: `${scrollProgress}%` }} 
+        style={!isScrollTimelineSupported ? { transform: `scaleX(${scrollProgress / 100})` } : undefined} 
         aria-hidden="true"
       />
 
