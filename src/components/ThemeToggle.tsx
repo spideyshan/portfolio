@@ -30,10 +30,18 @@ export default function ThemeToggle() {
       }
     };
     
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+    } else {
+      mediaQuery.addListener(handleSystemThemeChange);
+    }
     return () => {
       clearTimeout(timer);
-      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      } else {
+        mediaQuery.removeListener(handleSystemThemeChange);
+      }
     };
   }, []);
 

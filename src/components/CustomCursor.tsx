@@ -23,10 +23,20 @@ export default function CustomCursor() {
     };
     
     handlePointerChange(mediaQuery);
-    mediaQuery.addEventListener('change', handlePointerChange);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handlePointerChange);
+    } else {
+      mediaQuery.addListener(handlePointerChange);
+    }
 
     if (mediaQuery.matches) {
-      return () => mediaQuery.removeEventListener('change', handlePointerChange);
+      return () => {
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener('change', handlePointerChange);
+        } else {
+          mediaQuery.removeListener(handlePointerChange);
+        }
+      };
     }
 
     const onMouseMove = (e: MouseEvent) => {
@@ -92,7 +102,11 @@ export default function CustomCursor() {
     requestRef.current = requestAnimationFrame(animateTrail);
 
     return () => {
-      mediaQuery.removeEventListener('change', handlePointerChange);
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handlePointerChange);
+      } else {
+        mediaQuery.removeListener(handlePointerChange);
+      }
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mouseup', onMouseUp);
