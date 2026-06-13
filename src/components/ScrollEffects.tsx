@@ -5,26 +5,62 @@ import styles from '@/app/page.module.css';
 
 export default function ScrollEffects() {
   const [loading, setLoading] = useState(true);
+  const [exiting, setExiting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [wordIndex, setWordIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
-  useEffect(() => {
-    // 1. Loading animation controller
-    const handleLoad = () => {
-      setLoading(false);
-    };
+  const words = ['Hello', 'Bonjour', 'Hola', 'Ciao', 'Namaste', 'Vanakkam', 'Welcome'];
 
-    if (document.readyState === 'complete') {
-      setLoading(false);
-    } else {
-      window.addEventListener('load', handleLoad);
-      const timer = setTimeout(() => setLoading(false), 1200); // safety fallback
-      return () => {
-        window.removeEventListener('load', handleLoad);
-        clearTimeout(timer);
-      };
-    }
+  useEffect(() => {
+    // 1. Progress simulation loop
+    let interval: NodeJS.Timeout;
+    let progressValue = 0;
+    
+    const step = () => {
+      if (progressValue >= 100) {
+        progressValue = 100;
+        setProgress(100);
+        setWordIndex(words.length - 1);
+        
+        // Delay slightly for 'Welcome', then slide curtain up
+        setTimeout(() => {
+          setExiting(true);
+          // Unmount after curtain transition completes (800ms)
+          setTimeout(() => {
+            setLoading(false);
+          }, 800);
+        }, 300);
+        
+        clearInterval(interval);
+      } else {
+        // Increment progress non-linearly
+        const diff = Math.random() * 8 + 3;
+        progressValue = Math.min(progressValue + diff, 100);
+        setProgress(progressValue);
+      }
+    };
+    
+    interval = setInterval(step, 80);
+    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    // 2. Word cycling loop
+    if (progress === 100) return;
+    
+    const cycleInterval = setInterval(() => {
+      setWordIndex((prev) => {
+        if (prev < words.length - 1) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 200);
+    
+    return () => clearInterval(cycleInterval);
+  }, [progress]);
 
   useEffect(() => {
     // 2. Scroll and Back to Top controllers
@@ -89,12 +125,21 @@ export default function ScrollEffects() {
         aria-hidden="true"
       />
 
-      {/* Page Preloader */}
+      {/* Page Preloader / Curtain Splash Screen */}
       {loading && (
-        <div className={styles.pagePreloader}>
+        <div className={`${styles.pagePreloader} ${exiting ? styles.pagePreloaderExiting : ''}`}>
           <div className={styles.preloaderContent}>
-            <div className={styles.preloaderSpinner} />
-            <span className={styles.preloaderText}>Loading Portfolio...</span>
+            <div className={styles.preloaderWordContainer}>
+              <span key={words[wordIndex]} className={styles.preloaderWord}>
+                {words[wordIndex]}
+              </span>
+            </div>
+            <div className={styles.preloaderBarContainer}>
+              <div className={styles.preloaderBar} style={{ width: `${progress}%` }} />
+            </div>
+            <span className={styles.preloaderPercentage}>
+              {String(Math.round(progress)).padStart(3, '0')}%
+            </span>
           </div>
         </div>
       )}
