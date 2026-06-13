@@ -17,6 +17,22 @@ const getProficiencyLabel = (pct: number): string => {
   return 'Expert';
 };
 
+const getCleanImageUrl = (url: string | null | undefined, defaultUrl: string): string => {
+  if (!url) return defaultUrl;
+  
+  const lhMatch = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
+  if (lhMatch && lhMatch[1]) {
+    return `https://drive.google.com/thumbnail?id=${lhMatch[1]}&sz=w800`;
+  }
+  
+  const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (driveMatch && driveMatch[1]) {
+    return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w800`;
+  }
+  
+  return url;
+};
+
 export default async function Home() {
   // Fetch data concurrently on the server
   const [profile, projects, skills, education, achievements, certifications] = await Promise.all([
@@ -132,7 +148,7 @@ export default async function Home() {
           <div className={styles.heroVisual}>
             <div className={styles.heroArt}>
               <img
-                src={profile.avatar_url || 'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz'}
+                src={getCleanImageUrl(profile.avatar_url, 'https://drive.google.com/thumbnail?id=1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz&sz=w800')}
                 alt={profile.name}
                 className={styles.heroAvatar}
               />
@@ -152,7 +168,7 @@ export default async function Home() {
               <div className={styles.avatarContainer}>
                 {/* Fallback avatar if no URL is provided */}
                 <img
-                  src={profile.avatar_url_about || profile.avatar_url || 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL'}
+                  src={getCleanImageUrl(profile.avatar_url_about || profile.avatar_url, 'https://drive.google.com/thumbnail?id=1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL&sz=w800')}
                   alt={profile.name}
                   className={styles.avatar}
                 />
@@ -410,7 +426,7 @@ export default async function Home() {
               >
                 <div className={styles.resumeImageWrapper}>
                   <img 
-                    src={profile.resume_preview_url || 'https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y'} 
+                    src={getCleanImageUrl(profile.resume_preview_url, 'https://drive.google.com/thumbnail?id=1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y&sz=w800')} 
                     alt={`${profile.name}'s Resume Preview`} 
                     className={styles.resumePreviewImg} 
                   />

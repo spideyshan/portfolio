@@ -177,10 +177,10 @@ export default function AdminDashboard() {
       name: 'Shanmuga Nathan Manavalan',
       role: 'Computer Science Student & Aspiring Software Engineer',
       bio: 'I am a passionate Computer Science student focusing on modern full-stack web development. I love building responsive interfaces, learning new frameworks, and solving algorithmic problems.',
-      avatar_url: 'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz',
-      avatar_url_about: 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL',
+      avatar_url: 'https://drive.google.com/thumbnail?id=1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz&sz=w800',
+      avatar_url_about: 'https://drive.google.com/thumbnail?id=1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL&sz=w800',
       resume_url: '/resume.pdf',
-      resume_preview_url: 'https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y',
+      resume_preview_url: 'https://drive.google.com/thumbnail?id=1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y&sz=w800',
       email: 'abc@gmail.com',
       github_url: 'https://github.com',
       linkedin_url: 'https://linkedin.com',
@@ -195,7 +195,7 @@ export default function AdminDashboard() {
       needsUpdate = true;
     }
     if (!cachedProfile.avatar_url_about) {
-      cachedProfile.avatar_url_about = 'https://lh3.googleusercontent.com/d/1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL';
+      cachedProfile.avatar_url_about = 'https://drive.google.com/thumbnail?id=1KovBCy_E1whsaxKAVIrH-AWKgNQ2GkFL&sz=w800';
       needsUpdate = true;
     }
     if (!cachedProfile.location) {
@@ -207,11 +207,11 @@ export default function AdminDashboard() {
       needsUpdate = true;
     }
     if (!cachedProfile.resume_preview_url) {
-      cachedProfile.resume_preview_url = 'https://lh3.googleusercontent.com/d/1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y';
+      cachedProfile.resume_preview_url = 'https://drive.google.com/thumbnail?id=1fb_IkGGlT3euNspgsCnFmy75RP5k9X4Y&sz=w800';
       needsUpdate = true;
     }
-    if (cachedProfile.avatar_url && cachedProfile.avatar_url.includes('unsplash.com')) {
-      cachedProfile.avatar_url = 'https://lh3.googleusercontent.com/d/1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz';
+    if (cachedProfile.avatar_url && (cachedProfile.avatar_url.includes('unsplash.com') || cachedProfile.avatar_url.includes('lh3.googleusercontent.com'))) {
+      cachedProfile.avatar_url = 'https://drive.google.com/thumbnail?id=1TVZ-Oen9krePPrwk8dO3L_JroPKSMsWz&sz=w800';
       needsUpdate = true;
     }
     if (needsUpdate) {
