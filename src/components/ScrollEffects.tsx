@@ -97,11 +97,15 @@ export default function ScrollEffects() {
       {/* Page Preloader / Geometric Shutter Splash Screen */}
       {loading && (
         <div className={`${styles.pagePreloader} ${exiting ? styles.pagePreloaderExiting : ''}`}>
+          {/* Shockwave Ripple */}
+          <div className={`${styles.preloaderRipple} ${!logoVisible ? styles.preloaderRippleActive : ''}`}></div>
+
           {/* Central Glassmorphic Logo */}
           <div className={`${styles.preloaderLogoContainer} ${!logoVisible ? styles.preloaderLogoFadeOut : ''}`}>
             <div className={styles.preloaderLogoCircle}>
-              <span className={styles.preloaderLogoText}>P</span>
-              <div className={styles.preloaderLogoRing}></div>
+              <span className={styles.preloaderLogoText}>S</span>
+              <div className={styles.preloaderLogoRingOuter}></div>
+              <div className={styles.preloaderLogoRingInner}></div>
             </div>
           </div>
           
